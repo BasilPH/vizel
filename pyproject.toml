@@ -2,7 +2,7 @@
 name = "vizel"
 version = "0.1.0"
 description = "Vizualise a Zettelkasten"
-authors = ["Basil Philipp <basil@interdimensional-television.com"]
+authors = ["Basil Philipp <basil@interdimensional-television.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
