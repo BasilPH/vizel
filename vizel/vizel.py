@@ -74,15 +74,35 @@ def draw_digraph(digraph, output_file_string):
     dot.render(output_file_string, cleanup=True)
 
 
+def print_stats(digraph):
+    """
+    Prints the stats of `digraph` to console.
+    :param digraph: networkx DiGraph object.
+    :return: None
+    """
+
+    n_nodes_no_edges = len([node for node, degree in digraph.degree() if degree == 0])
+    click.echo(f'{n_nodes_no_edges} Zettel with no references')
+
+    click.echo(f'{nx.number_connected_components(digraph.to_undirected())} connected components')
+
+
 @click.command()
 @click.argument('directory', type=click.Path(exists=True, dir_okay=True))
 @click.option('--pdf-name', default='zettelkasten_vizel')
-def generate_graph(directory, pdf_name):
+@click.option('--print-pdf', 'flag_print_pdf', is_flag=True)
+@click.option('--print-stats', 'flag_print_stats', is_flag=True)
+def vizel(directory, pdf_name, flag_print_pdf, flag_print_stats):
     """Visualize a digraph of Zettel stored in DIRECTORY"""
 
     digraph = get_digraph(Path(directory))
 
-    draw_digraph(digraph, pdf_name)
+    if flag_print_pdf:
+        draw_digraph(digraph, pdf_name)
+
+    if flag_print_stats:
+        print_stats(digraph)
+
 
 if __name__ == '__main__':
-    generate_graph()
+    vizel()
