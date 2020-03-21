@@ -44,7 +44,9 @@ def get_digraph(zettel_directory_path):
     for zettel_path in zettel_directory_path.glob('*.md'):
         zettel_id = get_zettel_id(zettel_path)
 
-        digraph.add_node(zettel_id)
+        zettel_name = zettel_id + '\n' + zettel_path.name.replace('_', ' ').replace('.md', '')[13:63]
+
+        digraph.add_node(zettel_id, name=zettel_name)
 
         with open(zettel_path, 'r') as zettel_file:
             zettel_text = zettel_file.read()
@@ -65,8 +67,8 @@ def draw_digraph(digraph, output_file_string):
 
     dot = Digraph(comment='Zettelkasten Graph')
 
-    for node in digraph.nodes:
-        dot.node(node)
+    for (node, data) in digraph.nodes(data=True):
+        dot.node(node, data['name'])
 
     for u, v in digraph.edges:
         dot.edge(u, v)
