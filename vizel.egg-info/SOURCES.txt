@@ -1,0 +1,7 @@
+README.rst
+setup.py
+vizel/__init__.py
+vizel.egg-info/PKG-INFO
+vizel.egg-info/SOURCES.txt
+vizel.egg-info/dependency_links.txt
+vizel.egg-info/top_level.txt
