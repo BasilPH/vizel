@@ -10,8 +10,7 @@ def test_load_references():
 
 
 def test_get_graph():
-    graph = get_digraph(
-        Path('/Users/basil/Dropbox/Interdimensional_Television/interdimensional-television/vizel/tests/data'))
+    graph = get_digraph(Path('data'))
 
     assert graph.number_of_nodes() == 5
     assert graph.number_of_edges() == 6
