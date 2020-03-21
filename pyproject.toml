@@ -8,6 +8,7 @@ authors = ["Basil Philipp <basil@interdimensional-television.com>"]
 python = "^3.8"
 networkx = "^2.4"
 click = "^7.1.1"
+graphviz = "^0.13.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

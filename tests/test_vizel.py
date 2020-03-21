@@ -1,4 +1,4 @@
-from vizel.vizel import load_references, get_graph
+from vizel.vizel import load_references, get_digraph
 from pathlib import Path
 
 
@@ -10,7 +10,7 @@ def test_load_references():
 
 
 def test_get_graph():
-    graph = get_graph(
+    graph = get_digraph(
         Path('/Users/basil/Dropbox/Interdimensional_Television/interdimensional-television/vizel/tests/data'))
 
     assert graph.number_of_nodes() == 5
