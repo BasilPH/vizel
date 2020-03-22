@@ -95,7 +95,12 @@ def print_stats(digraph):
 @click.option('--print-pdf', 'flag_print_pdf', is_flag=True)
 @click.option('--print-stats', 'flag_print_stats', is_flag=True)
 def vizel(directory, pdf_name, flag_print_pdf, flag_print_stats):
-    """Visualize a digraph of Zettel stored in DIRECTORY"""
+    """Visualize a digraph of Zettel stored in DIRECTORY
+    :param directory: Directory where all the Zettel are.
+    :param flag_print_pdf: If the graph should be visualized in a PDF.
+    :param pdf_name: Name of PDF file.
+    :param flag_print_stats: If the stats of the graph should be printed.
+    """
 
     digraph = get_digraph(Path(directory))
 
