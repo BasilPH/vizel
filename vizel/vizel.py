@@ -22,6 +22,7 @@ def get_zettel_id(zettel_path):
     :param zettel_path: PosixPath object that points to a Zettel.
     :return: The ID of the Zettel or NONE. 
     """
+    # TODO Also support text files
     match = re.search('(\w{12}).*\.md', zettel_path.name)
 
     if match:
