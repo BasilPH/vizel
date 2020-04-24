@@ -6,6 +6,11 @@ import click
 from graphviz import Digraph
 
 
+@click.group()
+def main():
+    pass
+
+
 def load_references(zettel_text):
     """
     Parses `zettel_text` for references to other Zettel.
@@ -58,13 +63,18 @@ def get_digraph(zettel_directory_path):
     return digraph
 
 
-def draw_digraph(digraph, output_file_string):
+@main.command()
+@click.argument('directory', type=click.Path(exists=True, dir_okay=True))
+@click.option('--pdf-name', default='zettelkasten_vizel')
+def draw_graph_pdf(directory, pdf_name):
     """
-    Draw the networkx digraph.
-    :param graph: networkx DiGraph object.
-    :param output_file_string: String that represents the output path.
+    Draw the network graph of the Zettel as a PDF
+
+    :param directory: Directory where all the Zettel are.
     :return: None
     """
+
+    digraph = get_digraph(Path(directory))
 
     dot = Digraph(comment='Zettelkasten Graph')
 
@@ -74,43 +84,25 @@ def draw_digraph(digraph, output_file_string):
     for u, v in digraph.edges:
         dot.edge(u, v)
 
-    dot.render(output_file_string, cleanup=True)
+    dot.render(pdf_name, cleanup=True)
 
 
-def print_stats(digraph):
+@main.command()
+@click.argument('directory', type=click.Path(exists=True, dir_okay=True))
+def print_stats(directory):
     """
-    Prints the stats of `digraph` to console.
-    :param digraph: networkx DiGraph object.
+    Prints the stats of the Zettel graph
+
+    :param directory: Directory where all the Zettel are.
     :return: None
     """
+
+    digraph = get_digraph(Path(directory))
+
+    click.echo(f'{digraph.number_of_nodes()} Zettel')
+    click.echo(f'{digraph.number_of_edges()} references between Zettel')
 
     n_nodes_no_edges = len([node for node, degree in digraph.degree() if degree == 0])
     click.echo(f'{n_nodes_no_edges} Zettel with no references')
 
     click.echo(f'{nx.number_connected_components(digraph.to_undirected())} connected components')
-
-
-@click.command()
-@click.argument('directory', type=click.Path(exists=True, dir_okay=True))
-@click.option('--pdf-name', default='zettelkasten_vizel')
-@click.option('--print-pdf', 'flag_print_pdf', is_flag=True)
-@click.option('--print-stats', 'flag_print_stats', is_flag=True)
-def vizel(directory, pdf_name, flag_print_pdf, flag_print_stats):
-    """Visualize a digraph of Zettel stored in DIRECTORY
-    :param directory: Directory where all the Zettel are.
-    :param flag_print_pdf: If the graph should be visualized in a PDF.
-    :param pdf_name: Name of PDF file.
-    :param flag_print_stats: If the stats of the graph should be printed.
-    """
-
-    digraph = get_digraph(Path(directory))
-
-    if flag_print_pdf:
-        draw_digraph(digraph, pdf_name)
-
-    if flag_print_stats:
-        print_stats(digraph)
-
-
-if __name__ == '__main__':
-    vizel()

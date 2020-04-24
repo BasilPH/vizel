@@ -1,3 +1,76 @@
 # VIZEL
 
-A tool to visualise the connections in a Zettelkasten.
+A tool to visualise the connections between Zettel in a Zettelkasten.
+
+## Getting Started
+
+
+### Zettelkasten structure
+
+Currently only the format used by
+[The Archive](https://zettelkasten.de/the-archive/) is supported:
+
+* The IDs of Zettel are 12 digit numbers (e.g. `202003302203`)
+* The Zettel files have a `.md` extension and the filename of each
+  Zettel starts with an ID (e.g.
+  `202003302203_This_is_an_example_Zettel.md`).
+* All of your Zettel are in one directory and not spread amongst
+  multiple folders.
+
+### Installing
+
+The project uses [Poetry](https://python-poetry.org/).
+
+1. Install Poetry.
+2. Clone or download this repository.
+3. Run `poetry install` in the root of this project.
+
+### Usage
+
+`vizel` has two commands:
+
+1. `print-pdf` generates a graph where the nodes are Zettel and the
+   edges are the references between them.
+2. `print-stats` prints a number of statistics on your Zettel graph.
+
+All of the commands need to be called with the path to the directory
+where you keep your Zettel.
+
+
+#### print-pdf
+
+
+## Built With
+
+* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework
+  used
+* [Maven](https://maven.apache.org/) - Dependency Management
+* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+
+## Contributing
+
+Please read
+[CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426)
+for details on our code of conduct, and the process for submitting pull
+requests to us.
+
+## Versioning
+
+This project uses [SemVer](http://semver.org/) for versioning. For the
+versions available, see the
+[tags on the repository](https://github.com/BasilPH/vizel/tags).
+
+## Authors
+
+* **Basil Philipp** - *Owner*
+
+## License
+
+This project is licensed under the MIT License - see the
+[LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* Thank you Christian Tietze and Sascha Fast for creating
+  [The Archive](https://zettelkasten.de/the-archive/) app and writing
+  the [book](https://zettelkasten.de/book/de/) (German only).

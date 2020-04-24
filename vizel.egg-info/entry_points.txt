@@ -1,0 +1,3 @@
+[console_scripts]
+vizel = vizel.cli:main
+
