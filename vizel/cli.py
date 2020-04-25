@@ -11,19 +11,20 @@ def main():
     pass
 
 
-def load_references(zettel_text):
+def _load_references(zettel_text):
     """
     Parses `zettel_text` for references to other Zettel.
 
     :param zettel_text String of the Zettel content.
-    return: List of Zettel id's that `zettel_text` references.
+    :return List of Zettel id's that `zettel_text` references.
     """
     return re.findall('\[\[(\w{12})\]\]', zettel_text)
 
 
-def get_zettel_id(zettel_path):
+def _get_zettel_id(zettel_path):
     """
     Returns the ID of the Zettel that lies at `zettel_path`.
+
     :param zettel_path: PosixPath object that points to a Zettel.
     :return The ID of the Zettel or NONE. 
     """
@@ -36,7 +37,7 @@ def get_zettel_id(zettel_path):
         return None
 
 
-def get_digraph(zettel_directory_path):
+def _get_digraph(zettel_directory_path):
     """
     Parses the Zettel in `zettel_directory` and returns a digraph.
 
@@ -56,7 +57,7 @@ def get_digraph(zettel_directory_path):
         with open(zettel_path, 'r') as zettel_file:
             zettel_text = zettel_file.read()
 
-            for reference_id in load_references(zettel_text):
+            for reference_id in _load_references(zettel_text):
                 digraph.add_edge(zettel_id, reference_id)
 
     return digraph
@@ -73,7 +74,7 @@ def draw_graph_pdf(directory, pdf_name):
     :return None
     """
 
-    digraph = get_digraph(Path(directory))
+    digraph = _get_digraph(Path(directory))
 
     dot = Digraph(comment='Zettelkasten Graph')
 
@@ -96,7 +97,7 @@ def print_stats(directory):
     :return None
     """
 
-    digraph = get_digraph(Path(directory))
+    digraph = _get_digraph(Path(directory))
 
     click.echo(f'{digraph.number_of_nodes()} Zettel')
     click.echo(f'{digraph.number_of_edges()} references between Zettel')
