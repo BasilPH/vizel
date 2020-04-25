@@ -73,6 +73,7 @@ def draw_graph_pdf(directory, pdf_name):
     Draw the network graph of the Zettel as a PDF
 
     :param directory: Directory where all the Zettel are.
+    :param pdf_name: Name of the PDF file the graph is written into.
     :return None
     """
 
