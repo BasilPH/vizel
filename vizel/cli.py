@@ -49,11 +49,12 @@ def _get_digraph(zettel_directory_path):
     digraph = nx.DiGraph()
 
     for zettel_path in zettel_directory_path.glob('*.md'):
-        zettel_id = get_zettel_id(zettel_path)
+        zettel_id = _get_zettel_id(zettel_path)
 
-        zettel_name = zettel_id + '\n' + zettel_path.name.replace('_', ' ').replace('.md', '')[13:63]
+        # Create a short, 50 character, description on two lines
+        zettel_short_description = zettel_id + '\n' + zettel_path.name.replace('_', ' ').replace('.md', '')[13:63]
 
-        digraph.add_node(zettel_id, name=zettel_name)
+        digraph.add_node(zettel_id, short_description=zettel_short_description)
 
         with open(zettel_path, 'r') as zettel_file:
             zettel_text = zettel_file.read()
@@ -80,7 +81,7 @@ def draw_graph_pdf(directory, pdf_name):
     dot = Digraph(comment='Zettelkasten Graph')
 
     for (node, data) in digraph.nodes(data=True):
-        dot.node(node, data['name'])
+        dot.node(node, data['short_description'])
 
     for u, v in digraph.edges:
         dot.edge(u, v)
@@ -103,7 +104,7 @@ def print_stats(directory):
     click.echo(f'{digraph.number_of_nodes()} Zettel')
     click.echo(f'{digraph.number_of_edges()} references between Zettel')
 
-    n_nodes_no_edges = len([node for node, degree in digraph.degree() if degree == 0])
+    n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
     click.echo(f'{n_nodes_no_edges} Zettel with no references')
 
     click.echo(f'{nx.number_connected_components(digraph.to_undirected())} connected components')
