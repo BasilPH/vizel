@@ -8,6 +8,7 @@ from graphviz import Digraph
 
 @click.group()
 def main():
+    # TODO Collect directory here and create digraph object
     pass
 
 
