@@ -14,8 +14,8 @@ def main():
 def load_references(zettel_text):
     """
     Parses `zettel_text` for references to other Zettel.
-    :param zettel_text String of the Zettel content.
 
+    :param zettel_text String of the Zettel content.
     return: List of Zettel id's that `zettel_text` references.
     """
     return re.findall('\[\[(\w{12})\]\]', zettel_text)
@@ -25,7 +25,7 @@ def get_zettel_id(zettel_path):
     """
     Returns the ID of the Zettel that lies at `zettel_path`.
     :param zettel_path: PosixPath object that points to a Zettel.
-    :return: The ID of the Zettel or NONE. 
+    :return The ID of the Zettel or NONE. 
     """
     # TODO Also support text files
     match = re.search('(\w{12}).*\.md', zettel_path.name)
@@ -41,8 +41,7 @@ def get_digraph(zettel_directory_path):
     Parses the Zettel in `zettel_directory` and returns a digraph.
 
     :param zettel_directory_path PosixPath to directory where the Zettel are stored.
-
-    return: DiGraph object representing the Zettel graph.
+    :return DiGraph object representing the Zettel graph.
     """
 
     digraph = nx.DiGraph()
@@ -71,7 +70,7 @@ def draw_graph_pdf(directory, pdf_name):
     Draw the network graph of the Zettel as a PDF
 
     :param directory: Directory where all the Zettel are.
-    :return: None
+    :return None
     """
 
     digraph = get_digraph(Path(directory))
@@ -94,7 +93,7 @@ def print_stats(directory):
     Prints the stats of the Zettel graph
 
     :param directory: Directory where all the Zettel are.
-    :return: None
+    :return None
     """
 
     digraph = get_digraph(Path(directory))
