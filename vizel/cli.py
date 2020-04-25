@@ -54,7 +54,7 @@ def _get_digraph(zettel_directory_path):
         # Create a short, 50 character, description on two lines
         zettel_short_description = zettel_id + '\n' + zettel_path.name.replace('_', ' ').replace('.md', '')[13:63]
 
-        digraph.add_node(zettel_id, short_description=zettel_short_description)
+        digraph.add_node(zettel_id, short_description=zettel_short_description, path=zettel_path)
 
         with open(zettel_path, 'r') as zettel_file:
             zettel_text = zettel_file.read()
@@ -63,6 +63,17 @@ def _get_digraph(zettel_directory_path):
                 digraph.add_edge(zettel_id, reference_id)
 
     return digraph
+
+
+def _get_zero_degree_nodes(digraph):
+    """
+    Get all the nodes that have degree zero
+
+    :param digraph: DiGraph object representing the Zettel graph.
+    :return: List of nodes from `digraph` where degree is 0. 
+    """
+
+    return [node for node, degree in digraph.degree() if degree == 0]
 
 
 @main.command()
@@ -109,3 +120,22 @@ def print_stats(directory):
     click.echo(f'{n_nodes_no_edges} Zettel with no references')
 
     click.echo(f'{nx.number_connected_components(digraph.to_undirected())} connected components')
+
+
+@main.command()
+@click.argument('directory', type=click.Path(exists=True, dir_okay=True))
+def print_unconnected(directory):
+    """
+    Prints all of the Zettel that have no in- or outgoing connections
+
+    :param directory: Directory where all the Zettel are.
+    :return None
+    """
+
+    digraph = _get_digraph(Path(directory))
+
+    zero_degree_nodes = _get_zero_degree_nodes(digraph)
+
+    for node in zero_degree_nodes:
+        filename = digraph.nodes[node]['path'].name
+        click.echo(f'{node}\t{filename}')
