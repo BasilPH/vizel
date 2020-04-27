@@ -27,17 +27,19 @@ The project uses [Poetry](https://python-poetry.org/).
 
 ### Usage
 
-`vizel` has two commands:
-
-1. `print-pdf` generates a graph where the nodes are Zettel and the
-   edges are the references between them.
-2. `print-stats` prints a number of statistics on your Zettel graph.
-
-All of the commands need to be called with the path to the directory
-where you keep your Zettel.
+`vizel` has the following commands:
 
 
-#### print-pdf
+#### graph-pdf
+```
+vizel graph-pdf [OPTIONS] DIRECTORY
+
+Generates a PDF displaying the graph created spanned by Zettel and their connections in the folder DIRECTORY.
+
+Options:
+  --pdf-name TEXT  Name of the PDF file the graph is written into. Default:
+                   vizel_graph
+```
 
 
 ## Built With

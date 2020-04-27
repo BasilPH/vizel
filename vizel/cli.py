@@ -76,12 +76,14 @@ def _get_zero_degree_nodes(digraph):
     return [node for node, degree in digraph.degree() if degree == 0]
 
 
-@main.command()
+@main.command(short_help='PDF graph of Zettel')
 @click.argument('directory', type=click.Path(exists=True, dir_okay=True))
-@click.option('--pdf-name', default='zettelkasten_vizel')
-def draw_graph_pdf(directory, pdf_name):
+@click.option('--pdf-name', default='vizel_graph',
+              help='Name of the PDF file the graph is written into. Default: vizel_graph')
+def graph_pdf(directory, pdf_name):
     """
-    Draw the network graph of the Zettel as a PDF
+    Generates a PDF of the graph spanned by Zettel in DIRECTORY.
+    \f
 
     :param directory: Directory where all the Zettel are.
     :param pdf_name: Name of the PDF file the graph is written into.
