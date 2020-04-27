@@ -132,11 +132,13 @@ def stats(directory):
     click.echo(f'{nx.number_connected_components(digraph.to_undirected())} connected components')
 
 
-@main.command()
+@main.command(short_help='Zettel without references')
 @click.argument('directory', type=click.Path(exists=True, dir_okay=True))
-def print_unconnected(directory):
+def unconnected(directory):
     """
-    Prints all of the Zettel that have no in- or outgoing connections
+    Prints all of the Zettel in DIRECTORY that have no in- or outgoing references.
+
+    \f
 
     :param directory: Directory where all the Zettel are.
     :return None

@@ -59,6 +59,16 @@ Options:
   --help  Show this message and exit.
 ```
 
+#### unconnected
+```
+Usage: vizel unconnected [OPTIONS] DIRECTORY
+
+  Prints all of the Zettel in DIRECTORY that have no in- or outgoing
+  references.
+
+Options:
+  --help  Show this message and exit.
+```
 
 ## Built With
 
