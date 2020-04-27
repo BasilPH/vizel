@@ -76,7 +76,7 @@ def _get_zero_degree_nodes(digraph):
     return [node for node, degree in digraph.degree() if degree == 0]
 
 
-@main.command(short_help='PDF graph of Zettel')
+@main.command(short_help='PDF of Zettel graph')
 @click.argument('directory', type=click.Path(exists=True, dir_okay=True))
 @click.option('--pdf-name', default='vizel_graph',
               help='Name of the PDF file the graph is written into. Default: vizel_graph')
