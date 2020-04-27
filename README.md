@@ -39,6 +39,24 @@ Generates a PDF displaying the graph created spanned by Zettel and their connect
 Options:
   --pdf-name TEXT  Name of the PDF file the graph is written into. Default:
                    vizel_graph
+  --help  Show this message and exit.
+```
+
+#### stats
+```
+
+Usage: vizel stats [OPTIONS] DIRECTORY
+
+  Prints the stats of the graph spanned by Zettel in DIRECTORY.
+
+  Stats calculated:
+  - Number of Zettel
+  - Number of references between Zettel (including bi-directional and duplicate)
+  - Number of Zettel without any reference from or to a Zettel
+  - Number of connected components
+  
+Options:
+  --help  Show this message and exit.
 ```
 
 

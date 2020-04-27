@@ -103,11 +103,19 @@ def graph_pdf(directory, pdf_name):
     dot.render(pdf_name, cleanup=True)
 
 
-@main.command()
+@main.command(short_help='Stats of Zettel graph')
 @click.argument('directory', type=click.Path(exists=True, dir_okay=True))
-def print_stats(directory):
+def stats(directory):
     """
-    Prints the stats of the Zettel graph
+    Prints the stats of the graph spanned by Zettel in DIRECTORY.
+
+    \b
+    Stats calculated :
+    - Number of Zettel
+    - Number of references between Zettel (including bi-directional and duplicate)
+    - Number of Zettel without any reference from or to a Zettel
+    - Number of connected components
+    \f
 
     :param directory: Directory where all the Zettel are.
     :return None
