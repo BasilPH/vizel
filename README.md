@@ -4,7 +4,6 @@ A tool to visualise the connections between Zettel in a Zettelkasten.
 
 ## Getting Started
 
-
 ### Zettelkasten structure
 
 Currently only the format used by
@@ -28,7 +27,6 @@ The project uses [Poetry](https://python-poetry.org/).
 ### Usage
 
 `vizel` has the following commands:
-
 
 #### graph-pdf
 ```
@@ -83,7 +81,6 @@ Feel free to open issues and pull-requests.
 You can reach out to me for feeback or questions on
 [Twitter](https://twitter.com/BasilPH) or through
 [my website](https://interdimensional-television.com/).
-
 
 ## Versioning
 
