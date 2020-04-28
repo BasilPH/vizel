@@ -70,7 +70,7 @@ Options:
   --help  Show this message and exit.
 ```
 
-## Built with
+## Built With
 
 * [NetworkX](https://networkx.github.io/): Network analysis in Python
 * [click](https://click.palletsprojects.com): Python composable command line interface toolkit
@@ -97,8 +97,8 @@ versions available, see the
 
 ## License
 
-This project is licensed under the MIT License - see the
-[LICENSE.md](LICENSE.md) file for details
+This project is licensed under GNU GPLv3 - see the [LICENSE](LICENSE)
+file for details
 
 ## Acknowledgments
 
