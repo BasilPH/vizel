@@ -3,6 +3,21 @@ name = "vizel"
 version = "0.1.0"
 description = "Vizualise a Zettelkasten"
 authors = ["Basil Philipp <basil@interdimensional-television.com>"]
+license = "GPL-3.0-only"
+readme = "README.md"
+homepage = "https://github.com/BasilPH/vizel"
+repository = "https://github.com/BasilPH/vizel"
+keywords = ["zettelkasten", "knowledge-management"]
+classifiers = [
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    "Topic :: Utilities",
+    "Topic :: Text Processing",
+]
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
