@@ -70,19 +70,20 @@ Options:
   --help  Show this message and exit.
 ```
 
-## Built With
+## Built with
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework
-  used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [NetworkX](https://networkx.github.io/): Network analysis in Python
+* [click](https://click.palletsprojects.com): Python composable command line interface toolkit
+* [Graphviz](https://github.com/xflr6/graphviz): Simple Python interface for Graphviz
 
 ## Contributing
 
-Please read
-[CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426)
-for details on our code of conduct, and the process for submitting pull
-requests to us.
+Feel free to open issues and pull-requests.
+
+You can reach out to me for feeback or questions on
+[Twitter](https://twitter.com/BasilPH) or through
+[my website](https://interdimensional-television.com/).
+
 
 ## Versioning
 
