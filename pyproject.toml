@@ -17,17 +17,23 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-networkx = "^2.4"
+python = "^2.7 || ^3.5"
+networkx = [ 
+            {version =  "2.2", python="^2.7"},
+            {version =  "2.4", python="^3.5"}
+        ]
 click = "^7.1.1"
 graphviz = "^0.13.2"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = [ 
+            {version =  "^4.6", python="^2.7"},
+            {version =  "^5.2", python="^3.5"}
+        ]
 
+[tool.poetry.scripts]
+vizel = 'vizel.cli:main'
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
-[tool.poetry.scripts]
-vizel = 'vizel.cli:main'

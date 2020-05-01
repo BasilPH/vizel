@@ -1,6 +1,6 @@
 import re
-from pathlib import Path
-
+import glob
+import os.path
 import networkx as nx
 import click
 from graphviz import Digraph
@@ -26,11 +26,10 @@ def _get_zettel_id(zettel_path):
     """
     Returns the ID of the Zettel that lies at `zettel_path`.
 
-    :param zettel_path: PosixPath object that points to a Zettel.
+    :param zettel_path: Path string that points to a Zettel.
     :return The ID of the Zettel or NONE.
     """
-    # TODO Also support text files
-    match = re.search('(\w{12}).*[\.md|\.txt]', zettel_path.name)
+    match = re.search('(\w{12}).*[\.md|\.txt]', os.path.basename(zettel_path))
 
     if match:
         return match.group(1)
@@ -42,17 +41,18 @@ def _get_digraph(zettel_directory_path):
     """
     Parses the Zettel in `zettel_directory` and returns a digraph.
 
-    :param zettel_directory_path PosixPath to directory where the Zettel are stored.
+    :param zettel_directory_path Path to directory where the Zettel are stored.
     :return DiGraph object representing the Zettel graph.
     """
 
     digraph = nx.DiGraph()
 
-    for zettel_path in zettel_directory_path.glob('*[.md|.txt]'):
+    for zettel_path in glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]')):
         zettel_id = _get_zettel_id(zettel_path)
 
         # Create a short, 50 character, description on two lines
-        short_des = zettel_id + '\n' + zettel_path.name.replace('_', ' ').replace('.md', '').replace('.txt', '')[13:63]
+        zettel_name = os.path.basename(zettel_path)
+        short_des = zettel_id + '\n' + zettel_name.replace('_', ' ').replace('.md', '').replace('.txt', '')[13:63]
 
         digraph.add_node(zettel_id, short_description=short_des, path=zettel_path)
 
@@ -90,7 +90,7 @@ def graph_pdf(directory, pdf_name):
     :return None
     """
 
-    digraph = _get_digraph(Path(directory))
+    digraph = _get_digraph(directory)
 
     dot = Digraph(comment='Zettelkasten Graph')
 
@@ -124,15 +124,15 @@ def stats(directory):
     :return None
     """
 
-    digraph = _get_digraph(Path(directory))
+    digraph = _get_digraph(directory)
 
-    click.echo(f'{digraph.number_of_nodes()} Zettel')
-    click.echo(f'{digraph.number_of_edges()} references between Zettel')
+    click.echo('{} Zettel'.format(digraph.number_of_nodes()))
+    click.echo('{} references between Zettel'.format(digraph.number_of_edges()))
 
     n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
-    click.echo(f'{n_nodes_no_edges} Zettel with no references')
+    click.echo('{} Zettel with no references'.format(n_nodes_no_edges))
 
-    click.echo(f'{nx.number_connected_components(digraph.to_undirected())} connected components')
+    click.echo('{} connected components'.format(nx.number_connected_components(digraph.to_undirected())))
 
 
 @main.command(short_help='Zettel without references')
@@ -147,10 +147,10 @@ def unconnected(directory):
     :return None
     """
 
-    digraph = _get_digraph(Path(directory))
+    digraph = _get_digraph(directory)
 
     zero_degree_nodes = _get_zero_degree_nodes(digraph)
 
     for node in zero_degree_nodes:
-        filename = digraph.nodes[node]['path'].name
-        click.echo(f'{node}\t{filename}')
+        filename = os.path.basename(digraph.nodes[node]['path'])
+        click.echo('{}\t{}'.format(node, filename))
