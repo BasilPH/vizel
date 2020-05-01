@@ -4,9 +4,9 @@ from vizel.cli import main
 from click.testing import CliRunner
 
 
-@pytest.fixture()
-def zettelkasten_directory():
-    return 'data/zettelkasten_md/'
+@pytest.fixture(params=['data/zettelkasten_md/', 'data/zettelkasten_txt/'])
+def zettelkasten_directory(request):
+    return request.param
 
 
 def test_stats(zettelkasten_directory):
