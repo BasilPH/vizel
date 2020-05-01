@@ -3,3 +3,8 @@
 
 .pytest_cache
 __pycache__
+dist
+vizel.egg-info/
+
+*.pyc
+.python-version

@@ -1,7 +1,7 @@
 [[package]]
 category = "dev"
 description = "Atomic file writes."
-marker = "sys_platform == \"win32\""
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\" and sys_platform == \"win32\""
 name = "atomicwrites"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -10,6 +10,7 @@ version = "1.3.0"
 [[package]]
 category = "dev"
 description = "Classes Without Boilerplate"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\""
 name = "attrs"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -32,19 +33,51 @@ version = "7.1.1"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
-marker = "sys_platform == \"win32\""
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and sys_platform == \"win32\" or python_version >= \"3.5\" and python_version < \"4.0\" and sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "0.4.3"
 
 [[package]]
+category = "dev"
+description = "Updated configparser from Python 3.7 for Python 2.6+."
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") and (python_version >= \"2.7\" and python_version < \"3.0\") or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\")"
+name = "configparser"
+optional = false
+python-versions = ">=2.6"
+version = "4.0.2"
+
+[package.extras]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2)", "pytest-flake8", "pytest-black-multipy"]
+
+[[package]]
+category = "dev"
+description = "Backports and enhancements for the contextlib module"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") and (python_version >= \"2.7\" and python_version < \"3.0\") or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\")"
+name = "contextlib2"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "0.6.0.post1"
+
+[[package]]
 category = "main"
 description = "Decorators for Humans"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\""
 name = "decorator"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
 version = "4.4.2"
+
+[[package]]
+category = "dev"
+description = "Python function signatures from PEP362 for Python 2.6, 2.7 and 3.2+"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\""
+name = "funcsigs"
+optional = false
+python-versions = "*"
+version = "1.0.2"
 
 [[package]]
 category = "main"
@@ -61,7 +94,48 @@ test = ["mock (>=2)", "pytest (>=3.4,<3.10.0 || >3.10.0)", "pytest-mock (>=1.8)"
 
 [[package]]
 category = "dev"
+description = "Read metadata from Python packages"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") or python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") or python_version >= \"3.5\" and python_version < \"3.8\""
+name = "importlib-metadata"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
+version = "1.6.0"
+
+[package.dependencies]
+zipp = ">=0.5"
+
+[package.dependencies.configparser]
+python = "<3"
+version = ">=3.5"
+
+[package.dependencies.contextlib2]
+python = "<3"
+version = "*"
+
+[package.dependencies.pathlib2]
+python = "<3"
+version = "*"
+
+[package.extras]
+docs = ["sphinx", "rst.linker"]
+testing = ["packaging", "importlib-resources"]
+
+[[package]]
+category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
+marker = "python_version >= \"2.7\" and python_version <= \"2.7\" or python_version > \"2.7\" and python_version < \"3.0\""
+name = "more-itertools"
+optional = false
+python-versions = "*"
+version = "5.0.0"
+
+[package.dependencies]
+six = ">=1.0.0,<2.0.0"
+
+[[package]]
+category = "dev"
+description = "More routines for operating on iterables, beyond itertools"
+marker = "python_version >= \"3.5\" and python_version < \"4.0\""
 name = "more-itertools"
 optional = false
 python-versions = ">=3.5"
@@ -70,6 +144,32 @@ version = "8.2.0"
 [[package]]
 category = "main"
 description = "Python package for creating and manipulating graphs and networks"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\""
+name = "networkx"
+optional = false
+python-versions = "*"
+version = "2.2"
+
+[package.dependencies]
+decorator = ">=4.3.0"
+
+[package.extras]
+all = ["numpy", "scipy", "pandas", "matplotlib", "pygraphviz", "pydot", "pyyaml", "gdal", "lxml", "nose"]
+gdal = ["gdal"]
+lxml = ["lxml"]
+matplotlib = ["matplotlib"]
+nose = ["nose"]
+numpy = ["numpy"]
+pandas = ["pandas"]
+pydot = ["pydot"]
+pygraphviz = ["pygraphviz"]
+pyyaml = ["pyyaml"]
+scipy = ["scipy"]
+
+[[package]]
+category = "main"
+description = "Python package for creating and manipulating graphs and networks"
+marker = "python_version >= \"3.5\" and python_version < \"4.0\""
 name = "networkx"
 optional = false
 python-versions = ">=3.5"
@@ -94,6 +194,7 @@ scipy = ["scipy"]
 [[package]]
 category = "dev"
 description = "Core utilities for Python packages"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\""
 name = "packaging"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -105,11 +206,33 @@ six = "*"
 
 [[package]]
 category = "dev"
+description = "Object-oriented filesystem paths"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") and (python_version >= \"2.7\" and python_version < \"3.0\") or python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\") or python_version >= \"3.5\" and python_version < \"3.6\""
+name = "pathlib2"
+optional = false
+python-versions = "*"
+version = "2.3.5"
+
+[package.dependencies]
+six = "*"
+
+[package.dependencies.scandir]
+python = "<3.5"
+version = "*"
+
+[[package]]
+category = "dev"
 description = "plugin and hook calling mechanisms for python"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\""
 name = "pluggy"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "0.13.1"
+
+[package.dependencies]
+[package.dependencies.importlib-metadata]
+python = "<3.8"
+version = ">=0.12"
 
 [package.extras]
 dev = ["pre-commit", "tox"]
@@ -117,6 +240,7 @@ dev = ["pre-commit", "tox"]
 [[package]]
 category = "dev"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\""
 name = "py"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
@@ -125,6 +249,7 @@ version = "1.8.1"
 [[package]]
 category = "dev"
 description = "Python parsing module"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\") or python_version >= \"3.5\" and python_version < \"4.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\")"
 name = "pyparsing"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
@@ -133,6 +258,52 @@ version = "2.4.6"
 [[package]]
 category = "dev"
 description = "pytest: simple powerful testing with Python"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\""
+name = "pytest"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+version = "4.6.9"
+
+[package.dependencies]
+atomicwrites = ">=1.0"
+attrs = ">=17.4.0"
+packaging = "*"
+pluggy = ">=0.12,<1.0"
+py = ">=1.5.0"
+six = ">=1.10.0"
+wcwidth = "*"
+
+[[package.dependencies.more-itertools]]
+python = "<2.8"
+version = ">=4.0.0,<6.0.0"
+
+[[package.dependencies.more-itertools]]
+python = ">=2.8"
+version = ">=4.0.0"
+
+[package.dependencies.colorama]
+python = "<3.4.0 || >=3.5.0"
+version = "*"
+
+[package.dependencies.funcsigs]
+python = "<3.0"
+version = ">=1.0"
+
+[package.dependencies.importlib-metadata]
+python = "<3.8"
+version = ">=0.12"
+
+[package.dependencies.pathlib2]
+python = "<3.6"
+version = ">=2.2.0"
+
+[package.extras]
+testing = ["argcomplete", "hypothesis (>=3.56)", "nose", "requests", "mock"]
+
+[[package]]
+category = "dev"
+description = "pytest: simple powerful testing with Python"
+marker = "python_version >= \"3.5\" and python_version < \"4.0\""
 name = "pytest"
 optional = false
 python-versions = ">=3.5"
@@ -148,13 +319,31 @@ pluggy = ">=0.12,<1.0"
 py = ">=1.5.0"
 wcwidth = "*"
 
+[package.dependencies.importlib-metadata]
+python = "<3.8"
+version = ">=0.12"
+
+[package.dependencies.pathlib2]
+python = "<3.6"
+version = ">=2.2.0"
+
 [package.extras]
 checkqa-mypy = ["mypy (v0.761)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
 category = "dev"
+description = "scandir, a better directory iterator and faster os.walk()"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") and (python_version >= \"2.7\" and python_version < \"3.0\") or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\")"
+name = "scandir"
+optional = false
+python-versions = "*"
+version = "1.10.0"
+
+[[package]]
+category = "dev"
 description = "Python 2 and 3 compatibility utilities"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\") or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") and (python_version >= \"2.7\" and python_version < \"3.0\") and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.6\") or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.6\") or python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\") and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.6\") or python_version >= \"2.7\" and python_version <= \"2.7\" or python_version >= \"2.8\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\") or python_version >= \"3.5\" and python_version < \"3.6\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.6\")"
 name = "six"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
@@ -163,14 +352,33 @@ version = "1.14.0"
 [[package]]
 category = "dev"
 description = "Measures number of Terminal column cells of wide-character codes"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"4.0\""
 name = "wcwidth"
 optional = false
 python-versions = "*"
 version = "0.1.8"
 
+[[package]]
+category = "dev"
+description = "Backport of pathlib-compatible object wrapper for zip files"
+marker = "python_version >= \"2.7\" and python_version < \"3.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") or python_version >= \"3.5\" and python_version < \"4.0\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\") or python_version >= \"3.5\" and python_version < \"3.8\" and (python_version >= \"2.7\" and python_version < \"3.0\" or python_version >= \"3.5\" and python_version < \"3.8\")"
+name = "zipp"
+optional = false
+python-versions = ">=2.7"
+version = "1.2.0"
+
+[package.dependencies]
+[package.dependencies.contextlib2]
+python = "<3.4"
+version = "*"
+
+[package.extras]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
+
 [metadata]
-content-hash = "d553c1c03cd11360fbfe820068b7c8b06e90b9a52ca2682e22dea88f582d3f96"
-python-versions = "^3.8"
+content-hash = "546778d8d6d7857dd53d756fbff3a815f0622ee6e8d8ba27d3ea268ac8ebb43c"
+python-versions = "^2.7 || ^3.5"
 
 [metadata.files]
 atomicwrites = [
@@ -189,25 +397,49 @@ colorama = [
     {file = "colorama-0.4.3-py2.py3-none-any.whl", hash = "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff"},
     {file = "colorama-0.4.3.tar.gz", hash = "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"},
 ]
+configparser = [
+    {file = "configparser-4.0.2-py2.py3-none-any.whl", hash = "sha256:254c1d9c79f60c45dfde850850883d5aaa7f19a23f13561243a050d5a7c3fe4c"},
+    {file = "configparser-4.0.2.tar.gz", hash = "sha256:c7d282687a5308319bf3d2e7706e575c635b0a470342641c93bea0ea3b5331df"},
+]
+contextlib2 = [
+    {file = "contextlib2-0.6.0.post1-py2.py3-none-any.whl", hash = "sha256:3355078a159fbb44ee60ea80abd0d87b80b78c248643b49aa6d94673b413609b"},
+    {file = "contextlib2-0.6.0.post1.tar.gz", hash = "sha256:01f490098c18b19d2bd5bb5dc445b2054d2fa97f09a4280ba2c5f3c394c8162e"},
+]
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},
     {file = "decorator-4.4.2.tar.gz", hash = "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7"},
+]
+funcsigs = [
+    {file = "funcsigs-1.0.2-py2.py3-none-any.whl", hash = "sha256:330cc27ccbf7f1e992e69fef78261dc7c6569012cf397db8d3de0234e6c937ca"},
+    {file = "funcsigs-1.0.2.tar.gz", hash = "sha256:a7bb0f2cf3a3fd1ab2732cb49eba4252c2af4240442415b4abce3b87022a8f50"},
 ]
 graphviz = [
     {file = "graphviz-0.13.2-py2.py3-none-any.whl", hash = "sha256:241fb099e32b8e8c2acca747211c8237e40c0b89f24b1622860075d59f4c4b25"},
     {file = "graphviz-0.13.2.zip", hash = "sha256:60acbeee346e8c14555821eab57dbf68a169e6c10bce40e83c1bf44f63a62a01"},
 ]
+importlib-metadata = [
+    {file = "importlib_metadata-1.6.0-py2.py3-none-any.whl", hash = "sha256:2a688cbaa90e0cc587f1df48bdc97a6eadccdcd9c35fb3f976a09e3b5016d90f"},
+    {file = "importlib_metadata-1.6.0.tar.gz", hash = "sha256:34513a8a0c4962bc66d35b359558fd8a5e10cd472d37aec5f66858addef32c1e"},
+]
 more-itertools = [
+    {file = "more-itertools-5.0.0.tar.gz", hash = "sha256:38a936c0a6d98a38bcc2d03fdaaedaba9f412879461dd2ceff8d37564d6522e4"},
+    {file = "more_itertools-5.0.0-py2-none-any.whl", hash = "sha256:c0a5785b1109a6bd7fac76d6837fd1feca158e54e521ccd2ae8bfe393cc9d4fc"},
+    {file = "more_itertools-5.0.0-py3-none-any.whl", hash = "sha256:fe7a7cae1ccb57d33952113ff4fa1bc5f879963600ed74918f1236e212ee50b9"},
     {file = "more-itertools-8.2.0.tar.gz", hash = "sha256:b1ddb932186d8a6ac451e1d95844b382f55e12686d51ca0c68b6f61f2ab7a507"},
     {file = "more_itertools-8.2.0-py3-none-any.whl", hash = "sha256:5dd8bcf33e5f9513ffa06d5ad33d78f31e1931ac9a18f33d37e77a180d393a7c"},
 ]
 networkx = [
+    {file = "networkx-2.2.zip", hash = "sha256:45e56f7ab6fe81652fb4bc9f44faddb0e9025f469f602df14e3b2551c2ea5c8b"},
     {file = "networkx-2.4-py3-none-any.whl", hash = "sha256:cdfbf698749a5014bf2ed9db4a07a5295df1d3a53bf80bf3cbd61edf9df05fa1"},
     {file = "networkx-2.4.tar.gz", hash = "sha256:f8f4ff0b6f96e4f9b16af6b84622597b5334bf9cae8cf9b2e42e7985d5c95c64"},
 ]
 packaging = [
     {file = "packaging-20.3-py2.py3-none-any.whl", hash = "sha256:82f77b9bee21c1bafbf35a84905d604d5d1223801d639cf3ed140bd651c08752"},
     {file = "packaging-20.3.tar.gz", hash = "sha256:3c292b474fda1671ec57d46d739d072bfd495a4f51ad01a055121d81e952b7a3"},
+]
+pathlib2 = [
+    {file = "pathlib2-2.3.5-py2.py3-none-any.whl", hash = "sha256:0ec8205a157c80d7acc301c0b18fbd5d44fe655968f5d947b6ecef5290fc35db"},
+    {file = "pathlib2-2.3.5.tar.gz", hash = "sha256:6cd9a47b597b37cc57de1c05e56fb1a1c9cc9fab04fe78c29acd090418529868"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
@@ -222,8 +454,23 @@ pyparsing = [
     {file = "pyparsing-2.4.6.tar.gz", hash = "sha256:4c830582a84fb022400b85429791bc551f1f4871c33f23e44f353119e92f969f"},
 ]
 pytest = [
+    {file = "pytest-4.6.9-py2.py3-none-any.whl", hash = "sha256:c77a5f30a90e0ce24db9eaa14ddfd38d4afb5ea159309bdd2dae55b931bc9324"},
+    {file = "pytest-4.6.9.tar.gz", hash = "sha256:19e8f75eac01dd3f211edd465b39efbcbdc8fc5f7866d7dd49fedb30d8adf339"},
     {file = "pytest-5.4.1-py3-none-any.whl", hash = "sha256:0e5b30f5cb04e887b91b1ee519fa3d89049595f428c1db76e73bd7f17b09b172"},
     {file = "pytest-5.4.1.tar.gz", hash = "sha256:84dde37075b8805f3d1f392cc47e38a0e59518fb46a431cfdaf7cf1ce805f970"},
+]
+scandir = [
+    {file = "scandir-1.10.0-cp27-cp27m-win32.whl", hash = "sha256:92c85ac42f41ffdc35b6da57ed991575bdbe69db895507af88b9f499b701c188"},
+    {file = "scandir-1.10.0-cp27-cp27m-win_amd64.whl", hash = "sha256:cb925555f43060a1745d0a321cca94bcea927c50114b623d73179189a4e100ac"},
+    {file = "scandir-1.10.0-cp34-cp34m-win32.whl", hash = "sha256:2c712840c2e2ee8dfaf36034080108d30060d759c7b73a01a52251cc8989f11f"},
+    {file = "scandir-1.10.0-cp34-cp34m-win_amd64.whl", hash = "sha256:2586c94e907d99617887daed6c1d102b5ca28f1085f90446554abf1faf73123e"},
+    {file = "scandir-1.10.0-cp35-cp35m-win32.whl", hash = "sha256:2b8e3888b11abb2217a32af0766bc06b65cc4a928d8727828ee68af5a967fa6f"},
+    {file = "scandir-1.10.0-cp35-cp35m-win_amd64.whl", hash = "sha256:8c5922863e44ffc00c5c693190648daa6d15e7c1207ed02d6f46a8dcc2869d32"},
+    {file = "scandir-1.10.0-cp36-cp36m-win32.whl", hash = "sha256:2ae41f43797ca0c11591c0c35f2f5875fa99f8797cb1a1fd440497ec0ae4b022"},
+    {file = "scandir-1.10.0-cp36-cp36m-win_amd64.whl", hash = "sha256:7d2d7a06a252764061a020407b997dd036f7bd6a175a5ba2b345f0a357f0b3f4"},
+    {file = "scandir-1.10.0-cp37-cp37m-win32.whl", hash = "sha256:67f15b6f83e6507fdc6fca22fedf6ef8b334b399ca27c6b568cbfaa82a364173"},
+    {file = "scandir-1.10.0-cp37-cp37m-win_amd64.whl", hash = "sha256:b24086f2375c4a094a6b51e78b4cf7ca16c721dcee2eddd7aa6494b42d6d519d"},
+    {file = "scandir-1.10.0.tar.gz", hash = "sha256:4d4631f6062e658e9007ab3149a9b914f3548cb38bfb021c64f39a025ce578ae"},
 ]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
@@ -232,4 +479,8 @@ six = [
 wcwidth = [
     {file = "wcwidth-0.1.8-py2.py3-none-any.whl", hash = "sha256:8fd29383f539be45b20bd4df0dc29c20ba48654a41e661925e612311e9f3c603"},
     {file = "wcwidth-0.1.8.tar.gz", hash = "sha256:f28b3e8a6483e5d49e7f8949ac1a78314e740333ae305b4ba5defd3e74fb37a8"},
+]
+zipp = [
+    {file = "zipp-1.2.0-py2.py3-none-any.whl", hash = "sha256:e0d9e63797e483a30d27e09fffd308c59a700d365ec34e93cc100844168bf921"},
+    {file = "zipp-1.2.0.tar.gz", hash = "sha256:c70410551488251b0fee67b460fb9a536af8d6f9f008ad10ac51f615b6a521b1"},
 ]

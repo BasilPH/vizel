@@ -1,28 +1,24 @@
 # VIZEL
 
-A tool to visualise the connections between Zettel in a Zettelkasten.
+See the stats and connections of your Zettelkasten.
 
 ## Getting Started
 
-### Zettelkasten structure
+### Required Zettelkasten structure
 
-Currently only the format used by
-[The Archive](https://zettelkasten.de/the-archive/) is supported:
+The following format is supported:
 
-* The IDs of Zettel are 12 digit numbers (e.g. `202003302203`)
-* The Zettel files have a `.md` extension and the filename of each
-  Zettel starts with an ID (e.g.
-  `202003302203_This_is_an_example_Zettel.md`).
-* All of your Zettel are in one directory and not spread amongst
-  multiple folders.
+* The IDs of Zettel are 12 digit numbers (e.g. `202003302203`).
+* The Zettel files have an `.md` or `.txt` extension and the filename of
+  each Zettel starts with an ID (e.g. `202003302203_This_is_an_example_Zettel.md`).
+* All of your Zettel are in one directory and not spread amongst multiple folders.
+
+If you use [The Archive](https://zettelkasten.de/the-archive/), you should be fine.
+
 
 ### Installing
 
-The project uses [Poetry](https://python-poetry.org/).
-
-1. Install Poetry.
-2. Clone or download this repository.
-3. Run `poetry install` in the root of this project.
+Run `pip install vizel`
 
 ### Usage
 
@@ -71,16 +67,29 @@ Options:
 ## Built With
 
 * [NetworkX](https://networkx.github.io/): Network analysis in Python
-* [click](https://click.palletsprojects.com): Python composable command line interface toolkit
+* [click](https://click.palletsprojects.com): Python composable command-line interface toolkit
 * [Graphviz](https://github.com/xflr6/graphviz): Simple Python interface for Graphviz
 
 ## Contributing
 
 Feel free to open issues and pull-requests.
 
-You can reach out to me for feeback or questions on
+You can reach out to me for feedback or questions on
 [Twitter](https://twitter.com/BasilPH) or through
 [my website](https://interdimensional-television.com/).
+
+### Development install
+
+The project uses [Poetry](https://python-poetry.org/).
+
+1. Install Poetry.
+2. Clone this repository.
+3. Run `poetry install` in the root of this project.
+
+### Running tests
+
+Run `py.test` in the `tests` directory.
+
 
 ## Versioning
 
@@ -94,11 +103,10 @@ versions available, see the
 
 ## License
 
-This project is licensed under GNU GPLv3 - see the [LICENSE](LICENSE)
-file for details
+This project is licensed under GNU GPLv3.
 
 ## Acknowledgments
 
 * Thank you Christian Tietze and Sascha Fast for creating
   [The Archive](https://zettelkasten.de/the-archive/) app and writing
-  the [book](https://zettelkasten.de/book/de/) (German only).
+  a [book](https://zettelkasten.de/book/de/) (German only) on the Zettelkasten method.
