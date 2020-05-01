@@ -15,9 +15,6 @@ classifiers = [
     "Topic :: Utilities",
     "Topic :: Text Processing",
 ]
-include = [
-    "LICENSE",
-]
 
 [tool.poetry.dependencies]
 python = "^3.8"

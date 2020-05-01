@@ -103,7 +103,7 @@ versions available, see the
 
 ## License
 
-This project is licensed under GNU GPLv3 - see the [LICENSE](LICENSE) file for details
+This project is licensed under GNU GPLv3.
 
 ## Acknowledgments
 
