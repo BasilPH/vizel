@@ -1,12 +1,17 @@
 from pathlib import Path
-
+import pytest
 from vizel.cli import main
 from click.testing import CliRunner
 
 
-def test_stats():
+@pytest.fixture()
+def zettelkasten_directory():
+    return 'data/zettelkasten_md/'
+
+
+def test_stats(zettelkasten_directory):
     runner = CliRunner()
-    result = runner.invoke(main, ['stats', 'data/'])
+    result = runner.invoke(main, ['stats', zettelkasten_directory])
 
     assert result.exit_code == 0
     expected_output = (
@@ -18,10 +23,10 @@ def test_stats():
     assert expected_output == result.output
 
 
-def test_graph_pdf_default():
+def test_graph_pdf_default(zettelkasten_directory):
     runner = CliRunner()
     pdf_path = Path('vizel_graph.pdf')
-    result = runner.invoke(main, ['graph-pdf', 'data/'])
+    result = runner.invoke(main, ['graph-pdf', zettelkasten_directory])
 
     assert result.exit_code == 0
     assert pdf_path.stat().st_size > 0
@@ -29,18 +34,18 @@ def test_graph_pdf_default():
     pdf_path.unlink()
 
 
-def test_graph_pdf_set_name(tmp_path):
+def test_graph_pdf_set_name(tmp_path, zettelkasten_directory):
     runner = CliRunner()
     pdf_path = tmp_path / 'zettelkasten_custom_name.pdf'
-    result = runner.invoke(main, ['graph-pdf', 'data/', '--pdf-name', f'{pdf_path}'])
+    result = runner.invoke(main, ['graph-pdf', zettelkasten_directory, '--pdf-name', f'{pdf_path}'])
 
     assert result.exit_code == 0
     assert pdf_path.stat().st_size > 0
 
 
-def test_unconnected():
+def test_unconnected(zettelkasten_directory):
     runner = CliRunner()
-    result = runner.invoke(main, ['unconnected', 'data/'])
+    result = runner.invoke(main, ['unconnected', zettelkasten_directory])
 
     assert result.exit_code == 0
     expected_output = (
