@@ -18,7 +18,7 @@ def test_stats():
     assert expected_output == result.output
 
 
-def test_graph_pdf_default(tmp_path):
+def test_graph_pdf_default():
     runner = CliRunner()
     pdf_path = Path('vizel_graph.pdf')
     result = runner.invoke(main, ['graph-pdf', 'data/'])
