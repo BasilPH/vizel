@@ -7,9 +7,9 @@ def test_stats():
     result = runner.invoke(main, ['stats', 'data/'])
     assert result.exit_code == 0
     expected = (
-        '5 Zettel\n'
-        '6 references between Zettel\n'
-        '0 Zettel with no references\n'
-        '1 connected components\n'
+        '4 Zettel\n'
+        '3 references between Zettel\n'
+        '1 Zettel with no references\n'
+        '2 connected components\n'
     )
     assert expected == result.output
