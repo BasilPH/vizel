@@ -27,10 +27,10 @@ def _get_zettel_id(zettel_path):
     Returns the ID of the Zettel that lies at `zettel_path`.
 
     :param zettel_path: PosixPath object that points to a Zettel.
-    :return The ID of the Zettel or NONE. 
+    :return The ID of the Zettel or NONE.
     """
     # TODO Also support text files
-    match = re.search('(\w{12}).*\.md', zettel_path.name)
+    match = re.search('(\w{12}).*[\.md|\.txt]', zettel_path.name)
 
     if match:
         return match.group(1)
@@ -48,13 +48,13 @@ def _get_digraph(zettel_directory_path):
 
     digraph = nx.DiGraph()
 
-    for zettel_path in zettel_directory_path.glob('*.md'):
+    for zettel_path in zettel_directory_path.glob('*[.md|.txt]'):
         zettel_id = _get_zettel_id(zettel_path)
 
         # Create a short, 50 character, description on two lines
-        zettel_short_description = zettel_id + '\n' + zettel_path.name.replace('_', ' ').replace('.md', '')[13:63]
+        short_des = zettel_id + '\n' + zettel_path.name.replace('_', ' ').replace('.md', '').replace('.txt', '')[13:63]
 
-        digraph.add_node(zettel_id, short_description=zettel_short_description, path=zettel_path)
+        digraph.add_node(zettel_id, short_description=short_des, path=zettel_path)
 
         with open(zettel_path, 'r') as zettel_file:
             zettel_text = zettel_file.read()

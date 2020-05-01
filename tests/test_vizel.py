@@ -20,7 +20,7 @@ def test_stats(zettelkasten_directory):
         '1 Zettel with no references\n'
         '2 connected components\n'
     )
-    assert expected_output == result.output
+    assert result.output == expected_output
 
 
 def test_graph_pdf_default(zettelkasten_directory):
@@ -48,7 +48,9 @@ def test_unconnected(zettelkasten_directory):
     result = runner.invoke(main, ['unconnected', zettelkasten_directory])
 
     assert result.exit_code == 0
+
+    expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
     expected_output = (
-        '202005011017\t202005011017_All_by_myself.md\n'
+        f'202005011017\t202005011017_All_by_myself.{expected_file_ending}\n'
     )
-    assert expected_output == result.output
+    assert result.output == expected_output

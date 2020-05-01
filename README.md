@@ -10,8 +10,8 @@ Currently only the format used by
 [The Archive](https://zettelkasten.de/the-archive/) is supported:
 
 * The IDs of Zettel are 12 digit numbers (e.g. `202003302203`)
-* The Zettel files have a `.md` extension and the filename of each
-  Zettel starts with an ID (e.g.
+* The Zettel files have an `.md` or `.txt` extension and the filename of
+  each Zettel starts with an ID (e.g.
   `202003302203_This_is_an_example_Zettel.md`).
 * All of your Zettel are in one directory and not spread amongst
   multiple folders.
