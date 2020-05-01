@@ -78,8 +78,8 @@ def _get_zero_degree_nodes(digraph):
 
 @main.command(short_help='PDF of Zettel graph')
 @click.argument('directory', type=click.Path(exists=True, dir_okay=True))
-@click.option('--pdf-name', default='vizel_graph',
-              help='Name of the PDF file the graph is written into. Default: vizel_graph')
+@click.option('--pdf-name', default='vizel_graph.pdf',
+              help='Name of the PDF file the graph is written into. Default: vizel_graph.pdf')
 def graph_pdf(directory, pdf_name):
     """
     Generates a PDF of the graph spanned by Zettel in DIRECTORY.
@@ -100,6 +100,9 @@ def graph_pdf(directory, pdf_name):
     for u, v in digraph.edges:
         dot.edge(u, v)
 
+    # Remove the last `.pdf` ending if present
+    if pdf_name.endswith('.pdf'):
+        pdf_name = pdf_name.rpartition('.pdf')[0]
     dot.render(pdf_name, cleanup=True)
 
 
