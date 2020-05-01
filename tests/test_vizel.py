@@ -1,7 +1,7 @@
-from pathlib import Path
 import pytest
 from vizel.cli import main
 from click.testing import CliRunner
+from os import stat, unlink, path
 
 
 @pytest.fixture(params=['data/zettelkasten_md/', 'data/zettelkasten_txt/'])
@@ -25,22 +25,25 @@ def test_stats(zettelkasten_directory):
 
 def test_graph_pdf_default(zettelkasten_directory):
     runner = CliRunner()
-    pdf_path = Path('vizel_graph.pdf')
+    pdf_path = 'vizel_graph.pdf'
     result = runner.invoke(main, ['graph-pdf', zettelkasten_directory])
 
     assert result.exit_code == 0
-    assert pdf_path.stat().st_size > 0
+    assert stat(pdf_path).st_size > 0
 
-    pdf_path.unlink()
+    unlink(pdf_path)
+
 
 
 def test_graph_pdf_set_name(tmp_path, zettelkasten_directory):
     runner = CliRunner()
-    pdf_path = tmp_path / 'zettelkasten_custom_name.pdf'
-    result = runner.invoke(main, ['graph-pdf', zettelkasten_directory, '--pdf-name', f'{pdf_path}'])
+    pdf_path = path.join(str(tmp_path), 'zettelkasten_custom_name.pdf')
+    result = runner.invoke(main, ['graph-pdf', zettelkasten_directory, '--pdf-name', pdf_path])
 
     assert result.exit_code == 0
-    assert pdf_path.stat().st_size > 0
+    assert stat(pdf_path).st_size > 0
+
+    unlink(pdf_path)
 
 
 def test_unconnected(zettelkasten_directory):
@@ -51,6 +54,6 @@ def test_unconnected(zettelkasten_directory):
 
     expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
     expected_output = (
-        f'202005011017\t202005011017_All_by_myself.{expected_file_ending}\n'
+        '202005011017\t202005011017_All_by_myself.{}\n'.format(expected_file_ending)
     )
     assert result.output == expected_output
