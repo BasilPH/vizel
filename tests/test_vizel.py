@@ -9,13 +9,13 @@ def test_stats():
     result = runner.invoke(main, ['stats', 'data/'])
 
     assert result.exit_code == 0
-    expected = (
+    expected_output = (
         '4 Zettel\n'
         '3 references between Zettel\n'
         '1 Zettel with no references\n'
         '2 connected components\n'
     )
-    assert expected == result.output
+    assert expected_output == result.output
 
 
 def test_graph_pdf_default(tmp_path):
@@ -36,3 +36,14 @@ def test_graph_pdf_set_name(tmp_path):
 
     assert result.exit_code == 0
     assert pdf_path.stat().st_size > 0
+
+
+def test_unconnected():
+    runner = CliRunner()
+    result = runner.invoke(main, ['unconnected', 'data/'])
+
+    assert result.exit_code == 0
+    expected_output = (
+        '202005011017\t202005011017_All_by_myself.md\n'
+    )
+    assert expected_output == result.output
