@@ -1,5 +1,7 @@
 # VIZEL
 
+[![Build Status](https://travis-ci.com/BasilPH/vizel.svg?branch=master)](https://travis-ci.com/BasilPH/vizel)
+
 See the stats and connections of your Zettelkasten.
 
 ## Getting Started
