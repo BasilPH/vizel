@@ -1,8 +1,10 @@
-# VIZEL
+![Vizel](assets/vizel_banner@2x.jpg)
 
 [![Build Status](https://travis-ci.com/BasilPH/vizel.svg?branch=master)](https://travis-ci.com/BasilPH/vizel)
 
 See the stats and connections of your Zettelkasten.
+
+![Demo](assets/vizel_demo.gif)
 
 ## Getting Started
 
