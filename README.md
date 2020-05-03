@@ -1,4 +1,4 @@
-# VIZEL
+![Vizel](assets/vizel_banner@2x.jpg)
 
 [![Build Status](https://travis-ci.com/BasilPH/vizel.svg?branch=master)](https://travis-ci.com/BasilPH/vizel)
 
