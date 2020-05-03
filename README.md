@@ -4,6 +4,8 @@
 
 See the stats and connections of your Zettelkasten.
 
+![Demo](assets/vizel_demo.gif)
+
 ## Getting Started
 
 ### Required Zettelkasten structure
