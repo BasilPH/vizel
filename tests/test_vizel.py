@@ -12,17 +12,24 @@ def zettelkasten_directory(request):
 
 
 def test_stats(zettelkasten_directory):
-    runner = CliRunner()
+    runner = CliRunner(mix_stderr=False)
     result = runner.invoke(main, ['stats', zettelkasten_directory])
 
     assert result.exit_code == 0
-    expected_output = (
+    stdout_output = (
         '4 Zettel\n'
         '3 references between Zettel\n'
         '1 Zettel with no references\n'
         '2 connected components\n'
     )
-    assert result.output == expected_output
+    assert result.stdout == stdout_output
+
+    expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
+    stderr_output_start_expected = 'Could not extract ID, skipping:'
+    stderr_output_end_expected = '1_invalid.{}\n'.format(expected_file_ending)
+
+    assert result.stderr.startswith(stderr_output_start_expected)
+    assert result.stderr.endswith(stderr_output_end_expected)
 
 
 def test_graph_pdf_default(zettelkasten_directory):
@@ -48,13 +55,19 @@ def test_graph_pdf_set_name(tmp_path, zettelkasten_directory):
 
 
 def test_unconnected(zettelkasten_directory):
-    runner = CliRunner()
+    runner = CliRunner(mix_stderr=False)
     result = runner.invoke(main, ['unconnected', zettelkasten_directory])
 
     assert result.exit_code == 0
 
     expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
-    expected_output = (
+    stdout_output = (
         '202005011017\t202005011017_All_by_myself.{}\n'.format(expected_file_ending)
     )
-    assert result.output == expected_output
+    assert result.stdout == stdout_output
+
+    stderr_output_start_expected = 'Could not extract ID, skipping:'
+    stderr_output_end_expected = '1_invalid.{}\n'.format(expected_file_ending)
+
+    assert result.stderr.startswith(stderr_output_start_expected)
+    assert result.stderr.endswith(stderr_output_end_expected)
