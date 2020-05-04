@@ -50,6 +50,10 @@ def _get_digraph(zettel_directory_path):
     for zettel_path in glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]')):
         zettel_id = _get_zettel_id(zettel_path)
 
+        if zettel_id is None:
+            click.echo('Could not extract ID, skipping: {}'.format(zettel_path), err=True)
+            continue
+
         # Create a short, 50 character, description on two lines
         zettel_name = os.path.basename(zettel_path)
         short_des = zettel_id + '\n' + zettel_name.replace('_', ' ').replace('.md', '').replace('.txt', '')[13:63]
