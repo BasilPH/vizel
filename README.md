@@ -24,6 +24,12 @@ If you use [The Archive](https://zettelkasten.de/the-archive/), you should be fi
 
 Run `pip install vizel`
 
+If you get an error about missing graphviz when running the `graph-pdf` command, you might need to install it with
+
+` brew install graphviz` on OS X or
+
+`sudo apt-get install graphviz` on Ubuntu.
+
 ### Usage
 
 `vizel` has the following commands:
