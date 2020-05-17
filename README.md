@@ -17,10 +17,10 @@ Vizel makes the following assumptions:
 * The Zettel files have an `.md` or `.txt` extension.
 * All Zettel are in one single directory.
 * References use the `[[REFERENCE]]` or `[LABEL](REFERENCE)` format. 
+* References of a Zettel pointing to itself are ignored.
 
 Vizel was first developed for the format used by the [The Archive](https://zettelkasten.de/the-archive/). 
 Other formats are now supported as well, thanks to the help from the community.
-
 
 ### Installing
 
@@ -32,7 +32,7 @@ If you get an error about missing graphviz when running the `graph-pdf` command,
 
 `sudo apt-get install graphviz` on Ubuntu.
 
-### Usage
+## Usage
 
 `vizel` has the following commands:
 

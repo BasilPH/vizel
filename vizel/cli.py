@@ -108,7 +108,8 @@ def _get_digraph(zettel_directory_path):
         digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
 
         for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
-            digraph.add_edge(zettel_filename, reference_zettel_filename)
+            if zettel_filename != reference_zettel_filename:
+                digraph.add_edge(zettel_filename, reference_zettel_filename)
 
     return digraph
 

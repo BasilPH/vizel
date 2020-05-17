@@ -2,3 +2,5 @@
 tags: #lonely
 
 This Zettel is alone in the vast darkness of space. As we all are.
+
+Pointing at itself [[202005011017]].
