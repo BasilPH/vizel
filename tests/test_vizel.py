@@ -25,11 +25,12 @@ def test_stats(zettelkasten_directory):
     assert result.stdout == stdout_output
 
     expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
-    stderr_output_start_expected = 'Could not extract ID, skipping:'
-    stderr_output_end_expected = '1_invalid.{}\n'.format(expected_file_ending)
+    stderr_output = (
+        'No matching Zettel for reference "202005171153" in 202002241029_Broken_references_Zettel.{ext}\n'
+        'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: 202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, 202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}\n'
+    )
 
-    assert result.stderr.startswith(stderr_output_start_expected)
-    assert result.stderr.endswith(stderr_output_end_expected)
+    assert result.stderr == stderr_output.format(ext=expected_file_ending)
 
 
 def test_graph_pdf_default(zettelkasten_directory):
@@ -62,12 +63,13 @@ def test_unconnected(zettelkasten_directory):
 
     expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
     stdout_output = (
-        '202005011017\t202005011017_All_by_myself.{}\n'.format(expected_file_ending)
+        '202005011017_All_by_myself.{}\n'.format(expected_file_ending)
     )
     assert result.stdout == stdout_output
 
-    stderr_output_start_expected = 'Could not extract ID, skipping:'
-    stderr_output_end_expected = '1_invalid.{}\n'.format(expected_file_ending)
+    stderr_output = (
+        'No matching Zettel for reference "202005171153" in 202002241029_Broken_references_Zettel.{ext}\n'
+        'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: 202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, 202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}\n'
+    )
 
-    assert result.stderr.startswith(stderr_output_start_expected)
-    assert result.stderr.endswith(stderr_output_end_expected)
+    assert result.stderr == stderr_output.format(ext=expected_file_ending)

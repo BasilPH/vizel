@@ -12,14 +12,45 @@ def main():
     pass
 
 
-def _load_references(zettel_text):
+def _load_references(zettel_path, zettel_directory_path):
     """
-    Parses `zettel_text` for references to other Zettel.
+    Parses the content of `zettel_path` for references to other Zettel.
 
-    :param zettel_text String of the Zettel content.
-    :return List of Zettel id's that `zettel_text` references.
+    :param zettel_path: Path to the Zettel we parse for references.
+    :param zettel_directory_path Path to directory where the Zettel are stored.
+    :return List of filenames of referenced Zettel.
     """
-    return re.findall('\[\[(\w{12})\]\]', zettel_text)
+    references = []
+    zettel_filenames = sorted(
+        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]'))])
+
+    # Look for links using the [[]] format.
+    with open(zettel_path, 'r') as zettel_file:
+        zettel_text = zettel_file.read()
+
+    reference_texts = re.findall('\[\[(\w+)\]\]', zettel_text)
+
+    for reference_text in reference_texts:
+        matching_zettel_filenames = []
+        for zettel_filename in zettel_filenames:
+            if zettel_filename.startswith(reference_text):
+                matching_zettel_filenames.append(zettel_filename)
+
+        if len(matching_zettel_filenames) == 1:
+            references += matching_zettel_filenames
+        elif len(matching_zettel_filenames) > 1:
+            click.echo(
+                'Skipping non-unique reference "{}" in {}. Candidates: {}'.format(reference_text,
+                                                                                  os.path.basename(zettel_path),
+                                                                                  ', '.join(
+                                                                                      matching_zettel_filenames)),
+                err=True)
+        else:
+            click.echo(
+                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path)),
+                err=True)
+
+    return references
 
 
 def _get_short_description(zettel_filename):
@@ -60,11 +91,8 @@ def _get_digraph(zettel_directory_path):
 
         digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
 
-        with open(zettel_path, 'r') as zettel_file:
-            zettel_text = zettel_file.read()
-
-            for reference_id in _load_references(zettel_text):
-                digraph.add_edge(zettel_filename, reference_id)
+        for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
+            digraph.add_edge(zettel_filename, reference_zettel_filename)
 
     return digraph
 
@@ -156,5 +184,4 @@ def unconnected(directory):
     zero_degree_nodes = _get_zero_degree_nodes(digraph)
 
     for node in zero_degree_nodes:
-        filename = os.path.basename(digraph.nodes[node]['path'])
-        click.echo('{}\t{}'.format(node, filename))
+        click.echo('{}'.format(node))
