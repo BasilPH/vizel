@@ -10,14 +10,16 @@ See the stats and connections of your Zettelkasten.
 
 ### Required Zettelkasten structure
 
-The following format is supported:
+Vizel tries to be format agnostic without requiring configuration.
 
-* The IDs of Zettel are 12 digit numbers (e.g. `202003302203`).
-* The Zettel files have an `.md` or `.txt` extension and the filename of
-  each Zettel starts with an ID (e.g. `202003302203_This_is_an_example_Zettel.md`).
-* All of your Zettel are in one directory and not spread amongst multiple folders.
+Vizel makes the following assumptions:
 
-If you use [The Archive](https://zettelkasten.de/the-archive/), you should be fine.
+* The Zettel files have an `.md` or `.txt` extension.
+* All Zettel are in one single directory.
+* References use the `[[REFERENCE]]` or `[LABEL](REFERENCE)` format. 
+
+Vizel was first developed for the format used by the [The Archive](https://zettelkasten.de/the-archive/). 
+Other formats are now supported as well, thanks to the help from the community.
 
 
 ### Installing
