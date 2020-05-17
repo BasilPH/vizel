@@ -12,24 +12,20 @@ def main():
     pass
 
 
-def _load_references(zettel_path, zettel_directory_path):
+def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     """
-    Parses the content of `zettel_path` for references to other Zettel.
+    Extracts references from a Zettel that match a reference and that point to exactly one existing file.
 
+    :param reference_regexp: Regexp that matches the references with one matching group.
     :param zettel_path: Path to the Zettel we parse for references.
-    :param zettel_directory_path Path to directory where the Zettel are stored.
-    :return List of filenames of referenced Zettel.
+    :param zettel_filenames: List of filenames in the Zettel directory.
+    :return: Filenames of Zettel that are referenced.
     """
     references = []
-    zettel_filenames = sorted(
-        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]'))])
-
-    # Look for links using the [[]] format.
     with open(zettel_path, 'r') as zettel_file:
         zettel_text = zettel_file.read()
-
-    reference_texts = re.findall('\[\[(\w+)\]\]', zettel_text)
-
+    # Look for links using the [[]] format.
+    reference_texts = re.findall(reference_regexp, zettel_text)
     for reference_text in reference_texts:
         matching_zettel_filenames = []
         for zettel_filename in zettel_filenames:
@@ -49,6 +45,26 @@ def _load_references(zettel_path, zettel_directory_path):
             click.echo(
                 'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path)),
                 err=True)
+    return references
+
+
+def _load_references(zettel_path, zettel_directory_path):
+    """
+    Parses the content of `zettel_path` for references to other Zettel.
+
+    :param zettel_path: Path to the Zettel we parse for references.
+    :param zettel_directory_path Path to directory where the Zettel are stored.
+    :return List of filenames of referenced Zettel.
+    """
+    references = []
+    zettel_filenames = sorted(
+        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]'))])
+
+    # Extract references for the [[]] link format
+    references += _extract_valid_references('\[\[(.+)\]\]', zettel_path, zettel_filenames)
+
+    # Extract references for the markdown link format
+    references += _extract_valid_references('\[.*\]\((.+)\)', zettel_path, zettel_filenames)
 
     return references
 

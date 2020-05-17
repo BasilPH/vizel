@@ -17,10 +17,10 @@ def test_stats(zettelkasten_directory):
 
     assert result.exit_code == 0
     stdout_output = (
-        '4 Zettel\n'
-        '3 references between Zettel\n'
+        '6 Zettel\n'
+        '4 references between Zettel\n'
         '1 Zettel with no references\n'
-        '2 connected components\n'
+        '3 connected components\n'
     )
     assert result.stdout == stdout_output
 
@@ -28,6 +28,8 @@ def test_stats(zettelkasten_directory):
     stderr_output = (
         'No matching Zettel for reference "202005171153" in 202002241029_Broken_references_Zettel.{ext}\n'
         'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: 202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, 202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}\n'
+        'No matching Zettel for reference "03272020061037-eda-artifacts.{ext}" in 03272020061037-electrodermal-activity.{ext}\n'
+        'No matching Zettel for reference "LINK" in 03272020061037-electrodermal-activity.{ext}\n'
     )
 
     assert result.stderr == stderr_output.format(ext=expected_file_ending)
@@ -70,6 +72,8 @@ def test_unconnected(zettelkasten_directory):
     stderr_output = (
         'No matching Zettel for reference "202005171153" in 202002241029_Broken_references_Zettel.{ext}\n'
         'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: 202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, 202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}\n'
+        'No matching Zettel for reference "03272020061037-eda-artifacts.{ext}" in 03272020061037-electrodermal-activity.{ext}\n'
+        'No matching Zettel for reference "LINK" in 03272020061037-electrodermal-activity.{ext}\n'
     )
 
     assert result.stderr == stderr_output.format(ext=expected_file_ending)
