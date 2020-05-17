@@ -100,7 +100,7 @@ def _get_digraph(zettel_directory_path):
 
     digraph = nx.DiGraph()
 
-    for zettel_path in glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]')):
+    for zettel_path in sorted(glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]'))):
 
         zettel_filename = os.path.basename(zettel_path)
         short_des = _get_short_description(zettel_filename)
