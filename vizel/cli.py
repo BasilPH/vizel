@@ -22,19 +22,25 @@ def _load_references(zettel_text):
     return re.findall('\[\[(\w{12})\]\]', zettel_text)
 
 
-def _get_zettel_id(zettel_path):
+def _get_short_description(zettel_filename):
     """
-    Returns the ID of the Zettel that lies at `zettel_path`.
-
-    :param zettel_path: Path string that points to a Zettel.
-    :return The ID of the Zettel or NONE.
+    Creates a short description out of the Zettel filename.
+    :param zettel_filename: Filename of the Zettel
+    :return: 50 character long string
     """
-    match = re.search('(\w{12}).*[\.md|\.txt]', os.path.basename(zettel_path))
 
-    if match:
-        return match.group(1)
-    else:
-        return None
+    # Create a short, 50 character, description
+    replace_with_space = ['_', '-']
+    remove = ['.md', '.txt']
+    short_des = zettel_filename
+
+    for replace_char in replace_with_space:
+        short_des = short_des.replace(replace_char, ' ')
+
+    for remove_char in remove:
+        short_des = short_des.replace(remove_char, '')
+
+    return short_des
 
 
 def _get_digraph(zettel_directory_path):
@@ -48,23 +54,17 @@ def _get_digraph(zettel_directory_path):
     digraph = nx.DiGraph()
 
     for zettel_path in glob.glob(os.path.join(zettel_directory_path, '*[.md|.txt]')):
-        zettel_id = _get_zettel_id(zettel_path)
 
-        if zettel_id is None:
-            click.echo('Could not extract ID, skipping: {}'.format(zettel_path), err=True)
-            continue
+        zettel_filename = os.path.basename(zettel_path)
+        short_des = _get_short_description(zettel_filename)
 
-        # Create a short, 50 character, description on two lines
-        zettel_name = os.path.basename(zettel_path)
-        short_des = zettel_id + '\n' + zettel_name.replace('_', ' ').replace('.md', '').replace('.txt', '')[13:63]
-
-        digraph.add_node(zettel_id, short_description=short_des, path=zettel_path)
+        digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
 
         with open(zettel_path, 'r') as zettel_file:
             zettel_text = zettel_file.read()
 
             for reference_id in _load_references(zettel_text):
-                digraph.add_edge(zettel_id, reference_id)
+                digraph.add_edge(zettel_filename, reference_id)
 
     return digraph
 
