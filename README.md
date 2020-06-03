@@ -86,6 +86,8 @@ Options:
 
 Feel free to open issues and pull-requests.
 
+If you've found vizel useful, please consider [sponsoring](https://github.com/sponsors/BasilPH) maintenance and further development.
+
 You can reach out to me for feedback or questions on
 [Twitter](https://twitter.com/BasilPH) or through
 [my website](https://interdimensional-television.com/).
@@ -105,7 +107,7 @@ Run `py.test` in the `tests` directory.
 
 ## Versioning
 
-This project uses [SemVer](http://semver.org/) for versioning. For the
+Vizel uses [SemVer](http://semver.org/) for versioning. For the
 versions available, see the
 [tags on the repository](https://github.com/BasilPH/vizel/tags).
 
