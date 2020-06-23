@@ -23,8 +23,8 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     """
     references = []
     with open(zettel_path, 'r') as zettel_file:
-        zettel_text = zettel_file.read()
-    # Look for links using the [[]] format.
+            zettel_text = zettel_file.read()
+
     reference_texts = re.findall(reference_regexp, zettel_text)
     for reference_text in reference_texts:
         matching_zettel_filenames = []
@@ -107,10 +107,12 @@ def _get_digraph(zettel_directory_path):
 
         digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
 
-        for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
-            if zettel_filename != reference_zettel_filename:
-                digraph.add_edge(zettel_filename, reference_zettel_filename)
-
+        try:
+            for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
+                if zettel_filename != reference_zettel_filename:
+                    digraph.add_edge(zettel_filename, reference_zettel_filename)
+        except UnicodeDecodeError as e:
+            click.echo('Skipping {}. UnicodeDecodeError: {}'.format(zettel_filename, e), err=True)
     return digraph
 
 

@@ -1,7 +1,9 @@
-import pytest
-from vizel.cli import main
-from click.testing import CliRunner
 from os import stat, unlink, path
+
+import pytest
+from click.testing import CliRunner
+
+from vizel.cli import main
 
 
 @pytest.fixture(params=['data/zettelkasten_md/', 'data/zettelkasten_txt/'])
@@ -17,19 +19,24 @@ def test_stats(zettelkasten_directory):
 
     assert result.exit_code == 0
     stdout_output = (
-        '6 Zettel\n'
+        '7 Zettel\n'
         '4 references between Zettel\n'
-        '1 Zettel with no references\n'
-        '3 connected components\n'
+        '2 Zettel with no references\n'
+        '4 connected components\n'
     )
     assert result.stdout == stdout_output
 
     expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
     stderr_output = (
-        'No matching Zettel for reference "03272020061037-eda-artifacts.{ext}" in 03272020061037-electrodermal-activity.{ext}\n'
+        'No matching Zettel for reference "03272020061037-eda-artifacts.{ext}" '
+        'in 03272020061037-electrodermal-activity.{ext}\n'
         'No matching Zettel for reference "LINK" in 03272020061037-electrodermal-activity.{ext}\n'
         'No matching Zettel for reference "202005171153" in 202002241029_Broken_references_Zettel.{ext}\n'
-        'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: 202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, 202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}\n'
+        'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: '
+        '202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, '
+        '202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}, '
+        '202006112225_broken_utf8.{ext}\n'
+        'Skipping 202006112225_broken_utf8.{ext}. UnicodeDecodeError: \'utf-8\' codec can\'t decode byte 0xff in position 0: invalid start byte\n'
     )
 
     assert result.stderr == stderr_output.format(ext=expected_file_ending)
@@ -65,15 +72,21 @@ def test_unconnected(zettelkasten_directory):
 
     expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
     stdout_output = (
-        '202005011017_All_by_myself.{}\n'.format(expected_file_ending)
+        '202005011017_All_by_myself.{ext}\n'
+        '202006112225_broken_utf8.{ext}\n'
     )
-    assert result.stdout == stdout_output
+    assert result.stdout == stdout_output.format(ext=expected_file_ending)
 
     stderr_output = (
-        'No matching Zettel for reference "03272020061037-eda-artifacts.{ext}" in 03272020061037-electrodermal-activity.{ext}\n'
+        'No matching Zettel for reference "03272020061037-eda-artifacts.{ext}" '
+        'in 03272020061037-electrodermal-activity.{ext}\n'
         'No matching Zettel for reference "LINK" in 03272020061037-electrodermal-activity.{ext}\n'
         'No matching Zettel for reference "202005171153" in 202002241029_Broken_references_Zettel.{ext}\n'
-        'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: 202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, 202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}\n'
+        'Skipping non-unique reference "2020" in 202002241029_Broken_references_Zettel.{ext}. Candidates: '
+        '202002241029_Broken_references_Zettel.{ext}, 202002251025_This_is_the_first_test_zettel.{ext}, '
+        '202003211727_This_is_the_second_test_zettel.{ext}, 202005011017_All_by_myself.{ext}, '
+        '202006112225_broken_utf8.{ext}\n'
+        'Skipping 202006112225_broken_utf8.{ext}. UnicodeDecodeError: \'utf-8\' codec can\'t decode byte 0xff in position 0: invalid start byte\n'
     )
 
     assert result.stderr == stderr_output.format(ext=expected_file_ending)
