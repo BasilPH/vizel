@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vizel"
-version = "0.2.0.rc1"
+version = "0.2.0.rc2"
 description = "Vizualise a Zettelkasten"
 authors = ["Basil Philipp <basil@interdimensional-television.com>"]
 license = "GPL-3.0-only"
