@@ -202,5 +202,5 @@ def unconnected(directory):
 
     zero_degree_nodes = _get_zero_degree_nodes(digraph)
 
-    for node in zero_degree_nodes:
+    for node in sorted(zero_degree_nodes):
         click.echo('{}'.format(node))
