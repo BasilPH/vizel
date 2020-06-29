@@ -24,6 +24,7 @@ networkx = [
         ]
 click = "^7.1.1"
 graphviz = "^0.13.2"
+six="^1.14.0"
 
 [tool.poetry.dev-dependencies]
 pytest = [ 
