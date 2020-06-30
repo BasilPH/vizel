@@ -1,8 +1,10 @@
-import re
 import glob
 import os.path
-import networkx as nx
+import re
+
 import click
+import networkx as nx
+import six
 from graphviz import Digraph
 
 
@@ -16,6 +18,8 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     """
     Extracts references from a Zettel that match a reference and that point to exactly one existing file.
 
+    Throws a UnicodeDecodeError if the file content can't be converted to unicode.
+
     :param reference_regexp: Regexp that matches the references with one matching group.
     :param zettel_path: Path to the Zettel we parse for references.
     :param zettel_filenames: List of filenames in the Zettel directory.
@@ -24,7 +28,11 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     references = []
     with open(zettel_path, 'r') as zettel_file:
         zettel_text = zettel_file.read()
-    # Look for links using the [[]] format.
+
+        # Internally we only want to deal with unicode
+        if six.PY2:
+            zettel_text = unicode(zettel_text, errors='strict')
+
     reference_texts = re.findall(reference_regexp, zettel_text)
     for reference_text in reference_texts:
         matching_zettel_filenames = []
@@ -107,10 +115,12 @@ def _get_digraph(zettel_directory_path):
 
         digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
 
-        for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
-            if zettel_filename != reference_zettel_filename:
-                digraph.add_edge(zettel_filename, reference_zettel_filename)
-
+        try:
+            for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
+                if zettel_filename != reference_zettel_filename:
+                    digraph.add_edge(zettel_filename, reference_zettel_filename)
+        except UnicodeDecodeError as e:
+            click.echo('Skipping {}: {}'.format(zettel_filename, e), err=True)
     return digraph
 
 
@@ -200,5 +210,5 @@ def unconnected(directory):
 
     zero_degree_nodes = _get_zero_degree_nodes(digraph)
 
-    for node in zero_degree_nodes:
+    for node in sorted(zero_degree_nodes):
         click.echo('{}'.format(node))

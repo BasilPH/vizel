@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vizel"
-version = "0.2.0.rc1"
+version = "0.2.0.rc3"
 description = "Vizualise a Zettelkasten"
 authors = ["Basil Philipp <basil@interdimensional-television.com>"]
 license = "GPL-3.0-only"
@@ -24,6 +24,7 @@ networkx = [
         ]
 click = "^7.1.1"
 graphviz = "^0.13.2"
+six="^1.14.0"
 
 [tool.poetry.dev-dependencies]
 pytest = [ 
