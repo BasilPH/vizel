@@ -10,7 +10,12 @@ from graphviz import Digraph
 
 @click.group()
 def main():
-    # TODO Collect directory here and create digraph object
+    """
+    See the stats and connections of your Zettelkasten.
+    \f
+
+   :return: None
+    """
     pass
 
 
