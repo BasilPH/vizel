@@ -217,3 +217,25 @@ def unconnected(directory):
 
     for node in sorted(zero_degree_nodes):
         click.echo('{}'.format(node))
+
+
+@main.command(short_help='List components')
+@click.argument('directory', type=click.Path(exists=True, dir_okay=True))
+def components(directory):
+    """
+    Lists the components and their Zettel in DIRECTORY.
+
+    \f
+
+    :param directory: Directory where all the Zettel are.
+    :return None
+    """
+    digraph = _get_digraph(directory)
+    undirected_graph = digraph.to_undirected()
+
+    for i, component in enumerate(sorted(nx.connected_components(undirected_graph), key=len, reverse=True), start=1):
+        click.echo(f'# Component {i}')
+        for zettel in sorted(component):
+            click.echo(zettel)
+
+        click.echo()

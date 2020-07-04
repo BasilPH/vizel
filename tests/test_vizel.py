@@ -93,3 +93,29 @@ def test_unconnected(zettelkasten_directory, stderr_expected):
     assert result.stdout == stdout_expected.format(ext=expected_file_ending)
 
     assert result.stderr == stderr_expected.format(ext=expected_file_ending)
+
+
+def test_components(zettelkasten_directory, stderr_expected):
+    runner = CliRunner(mix_stderr=False)
+    result = runner.invoke(main, ['components', zettelkasten_directory])
+
+    assert result.exit_code == 0
+
+    expected_file_ending = zettelkasten_directory.rpartition('_')[2].rstrip('/')
+
+    stdout_expected = (
+        '# Component 1\n'
+        '202002241029_Broken_references_Zettel.{ext}\n'
+        '202002251025_This_is_the_first_test_zettel.{ext}\n'
+        '202003211727_This_is_the_second_test_zettel.{ext}\n\n'
+        '# Component 2\n'
+        '03242020003215-eda-explained.{ext}\n'
+        '03272020061037-electrodermal-activity.{ext}\n\n'
+        '# Component 3\n'
+        '202005011017_All_by_myself.{ext}\n\n'
+        '# Component 4\n'
+        '202006112225_broken_utf8.{ext}\n\n'
+    )
+    assert result.stdout == stdout_expected.format(ext=expected_file_ending)
+
+    assert result.stderr == stderr_expected.format(ext=expected_file_ending)
