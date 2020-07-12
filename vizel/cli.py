@@ -73,7 +73,8 @@ def _load_references(zettel_path, zettel_directory_path):
     references += _extract_valid_references('\[\[([^\]\]]+)\]\]', zettel_path, zettel_filenames)
 
     # Extract references for the markdown link format
-    references += _extract_valid_references('\[.*\]\((.+)\)', zettel_path, zettel_filenames)
+    # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
+    references += _extract_valid_references('\[[^\]]+\]\(([^\)]+)\)', zettel_path, zettel_filenames)
 
     return references
 
