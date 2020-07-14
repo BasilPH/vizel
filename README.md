@@ -76,6 +76,16 @@ Options:
   --help  Show this message and exit.
 ```
 
+#### components
+```
+Usage: vizel components [OPTIONS] DIRECTORY
+
+  Lists the connected components and their Zettel in DIRECTORY.
+
+Options:
+  --help  Show this message and exit.
+```
+
 ## Built With
 
 * [NetworkX](https://networkx.github.io/): Network analysis in Python

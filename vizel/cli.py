@@ -221,11 +221,11 @@ def unconnected(directory):
         click.echo('{}'.format(node))
 
 
-@main.command(short_help='List components')
+@main.command(short_help='Connected components')
 @click.argument('directory', type=click.Path(exists=True, dir_okay=True))
 def components(directory):
     """
-    Lists the components and their Zettel in DIRECTORY.
+    Lists the connected components and their Zettel in DIRECTORY.
 
     \f
 
