@@ -47,9 +47,9 @@ def test_stats(zettelkasten_directory, stderr_expected):
     assert result.exit_code == 0
     stdout_output = (
         '7 Zettel\n'
-        '4 references between Zettel\n'
+        '6 references between Zettel\n'
         '2 Zettel with no references\n'
-        '4 connected components\n'
+        '3 connected components\n'
     )
     assert result.stdout == stdout_output
 

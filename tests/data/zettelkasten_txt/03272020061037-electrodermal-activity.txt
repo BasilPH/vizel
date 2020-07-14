@@ -31,4 +31,6 @@ nocite: |
 ---
 ---
 
+Here we have to links on one line to test the regex. [A first link](202002251025_This_is_the_first_test_zettel.txt) and a [second line](202003211727_This_is_the_second_test_zettel.txt).
+
 ### **References:**
