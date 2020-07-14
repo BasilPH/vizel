@@ -1,6 +1,7 @@
 import glob
 import os.path
 import re
+from operator import itemgetter
 
 import click
 import networkx as nx
@@ -235,9 +236,18 @@ def components(directory):
     digraph = _get_digraph(directory)
     undirected_graph = digraph.to_undirected()
 
-    for i, component in enumerate(sorted(nx.connected_components(undirected_graph), key=len, reverse=True), start=1):
-        click.echo(f'# Component {i}')
-        for zettel in sorted(component):
+    conn_components = nx.connected_components(undirected_graph)
+
+    # Sort the Zettel in each component
+    conn_components = [sorted(component) for component in conn_components]
+
+    # Sort the conn_components by their size and break ties with the name of their first Zettel
+    conn_components = sorted(conn_components, key=itemgetter(0))
+    conn_components = sorted(conn_components, key=len, reverse=True)
+
+    for i, component in enumerate(conn_components, start=1):
+        click.echo('# Component {}'.format(i))
+        for zettel in component:
             click.echo(zettel)
 
         click.echo()
