@@ -65,6 +65,20 @@ Options:
   --help  Show this message and exit.
 ```
 
+##### A note on connected components
+
+The fewer connected components your Zettelkasten has, the better. The ideal number is 1. It means that you can reach any 
+Zettel by following links. This, in turn, should increase the likelihood of making new semantic connections.
+
+Connected components are a concept from graph theory. In the context of a Zettelkasten and vizel, a connected component 
+is a set of Zettel, which can be reached from any other Zettel in the same component by following links. Those links do 
+not need to be direct but can pass through other Zettel. The direction of the links also doesn't matter. 
+
+Two Zettel are not in the same component if there is no way to reach one from the other through links.
+
+Connected components will show up as separate clusters of Zettel when using `graph-pdf`. Use the `components` command to 
+get a list of your components, and the Zettel contained in each. 
+
 #### unconnected
 ```
 Usage: vizel unconnected [OPTIONS] DIRECTORY
