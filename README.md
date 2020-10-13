@@ -16,10 +16,10 @@ Vizel makes the following assumptions:
 
 * The Zettel files have an `.md` or `.txt` extension.
 * All Zettel are in one single directory.
-* References use the `[[REFERENCE]]` or `[LABEL](REFERENCE)` format. 
+* References use the `[[REFERENCE]]` or `[LABEL](REFERENCE)` format.
 * References of a Zettel pointing to itself are ignored.
 
-Vizel was first developed for the format used by the [The Archive](https://zettelkasten.de/the-archive/). 
+Vizel was first developed for the format used by the [The Archive](https://zettelkasten.de/the-archive/).
 Other formats are now supported as well, thanks to the help from the community.
 
 ### Installing
@@ -67,17 +67,17 @@ Options:
 
 ##### A note on connected components
 
-The fewer connected components your Zettelkasten has, the better. The ideal number is 1. It means that you can reach any 
+The fewer connected components your Zettelkasten has, the better. The ideal number is 1. It means that you can reach any
 Zettel by following links. This, in turn, should increase the likelihood of making new semantic connections.
 
-Connected components are a concept from graph theory. In the context of a Zettelkasten and vizel, a connected component 
-is a set of Zettel, which can be reached from any other Zettel in the same component by following links. Those links do 
-not need to be direct but can pass through other Zettel. The direction of the links also doesn't matter. 
+Connected components are a concept from graph theory. In the context of a Zettelkasten and vizel, a connected component
+is a set of Zettel, which can be reached from any other Zettel in the same component by following links. Those links do
+not need to be direct but can pass through other Zettel. The direction of the links also doesn't matter.
 
 Two Zettel are not in the same component if there is no way to reach one from the other through links.
 
-Connected components will show up as separate clusters of Zettel when using `graph-pdf`. Use the `components` command to 
-get a list of your components, and the Zettel contained in each. 
+Connected components will show up as separate clusters of Zettel when using `graph-pdf`. Use the `components` command to
+get a list of your components, and the Zettel contained in each.
 
 #### unconnected
 ```
@@ -110,7 +110,7 @@ Options:
 
 Feel free to open issues and pull-requests.
 
-If you've found vizel useful, please consider [sponsoring](https://github.com/sponsors/BasilPH) maintenance and further development.
+If you've found vizel useful, please consider [sponsoring](https://github.com/sponsors/BasilPH) maintenance and further development. Or [buying me a coffee](https://www.buymeacoffee.com/interdimension).
 
 You can reach out to me for feedback or questions on
 [Twitter](https://twitter.com/BasilPH) or through
