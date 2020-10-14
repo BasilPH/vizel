@@ -120,18 +120,21 @@ Options:
 * [Graphviz](https://github.com/xflr6/graphviz): Simple Python interface
   for Graphviz
 
-## Contributing
+## Updates & Contributing
 
-Feel free to open issues and pull-requests.
+Feel free to open issues and pull-requests. Subscribe to the
+[vizel newsletter](https://tinyletter.com/vizel) to be informed about
+new releases and features in development.
+
+You can reach out to me for feedback or questions on
+[Twitter](https://twitter.com/BasilPH) or through
+[my website](https://interdimensional-television.com/).
 
 If you've found vizel useful, please consider
 [sponsoring](https://github.com/sponsors/BasilPH) maintenance and
 further development. Or
 [buying me a coffee](https://www.buymeacoffee.com/interdimension).
 
-You can reach out to me for feedback or questions on
-[Twitter](https://twitter.com/BasilPH) or through
-[my website](https://interdimensional-television.com/).
 
 ### Development install
 
