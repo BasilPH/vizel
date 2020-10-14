@@ -1,6 +1,7 @@
 import glob
 import os.path
 import re
+from operator import itemgetter
 
 import click
 import networkx as nx
@@ -10,7 +11,12 @@ from graphviz import Digraph
 
 @click.group()
 def main():
-    # TODO Collect directory here and create digraph object
+    """
+    See the stats and connections of your Zettelkasten.
+    \f
+
+   :return: None
+    """
     pass
 
 
@@ -214,3 +220,34 @@ def unconnected(directory):
 
     for node in sorted(zero_degree_nodes):
         click.echo('{}'.format(node))
+
+
+@main.command(short_help='Connected components')
+@click.argument('directory', type=click.Path(exists=True, dir_okay=True))
+def components(directory):
+    """
+    Lists the connected components and their Zettel in DIRECTORY.
+
+    \f
+
+    :param directory: Directory where all the Zettel are.
+    :return None
+    """
+    digraph = _get_digraph(directory)
+    undirected_graph = digraph.to_undirected()
+
+    conn_components = nx.connected_components(undirected_graph)
+
+    # Sort the Zettel in each component
+    conn_components = [sorted(component) for component in conn_components]
+
+    # Sort the conn_components by their size and break ties with the name of their first Zettel
+    conn_components = sorted(conn_components, key=itemgetter(0))
+    conn_components = sorted(conn_components, key=len, reverse=True)
+
+    for i, component in enumerate(conn_components, start=1):
+        click.echo('# Component {}'.format(i))
+        for zettel in component:
+            click.echo(zettel)
+
+        click.echo()

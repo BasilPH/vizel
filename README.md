@@ -16,17 +16,19 @@ Vizel makes the following assumptions:
 
 * The Zettel files have an `.md` or `.txt` extension.
 * All Zettel are in one single directory.
-* References use the `[[REFERENCE]]` or `[LABEL](REFERENCE)` format. 
+* References use the `[[REFERENCE]]` or `[LABEL](REFERENCE)` format.
 * References of a Zettel pointing to itself are ignored.
 
-Vizel was first developed for the format used by the [The Archive](https://zettelkasten.de/the-archive/). 
-Other formats are now supported as well, thanks to the help from the community.
+Vizel was first developed for the format used by the
+[The Archive](https://zettelkasten.de/the-archive/). Other formats are
+now supported as well, thanks to the help from the community.
 
 ### Installing
 
 Run `pip install vizel`
 
-If you get an error about missing graphviz when running the `graph-pdf` command, you might need to install it with
+If you get an error about missing graphviz when running the `graph-pdf`
+command, you might need to install it with
 
 ` brew install graphviz` on OS X or
 
@@ -37,6 +39,7 @@ If you get an error about missing graphviz when running the `graph-pdf` command,
 `vizel` has the following commands:
 
 #### graph-pdf
+
 ```
 vizel graph-pdf [OPTIONS] DIRECTORY
 
@@ -49,6 +52,7 @@ Options:
 ```
 
 #### stats
+
 ```
 
 Usage: vizel stats [OPTIONS] DIRECTORY
@@ -65,7 +69,28 @@ Options:
   --help  Show this message and exit.
 ```
 
+##### A note on connected components
+
+The fewer connected components your Zettelkasten has, the better. The
+ideal number is 1. It means that you can reach any Zettel by following
+links. This, in turn, should increase the likelihood of making new
+semantic connections.
+
+Connected components are a concept from graph theory. In the context of
+a Zettelkasten and vizel, a connected component is a set of Zettel,
+which can be reached from any other Zettel in the same component by
+following links. Those links do not need to be direct but can pass
+through other Zettel. The direction of the links also doesn't matter.
+
+Two Zettel are not in the same component if there is no way to reach one
+from the other through links.
+
+Connected components will show up as separate clusters of Zettel when
+using `graph-pdf`. Use the `components` command to get a list of your
+components, and the Zettel contained in each.
+
 #### unconnected
+
 ```
 Usage: vizel unconnected [OPTIONS] DIRECTORY
 
@@ -76,21 +101,40 @@ Options:
   --help  Show this message and exit.
 ```
 
+#### components
+
+```
+Usage: vizel components [OPTIONS] DIRECTORY
+
+  Lists the connected components and their Zettel in DIRECTORY.
+
+Options:
+  --help  Show this message and exit.
+```
+
 ## Built With
 
 * [NetworkX](https://networkx.github.io/): Network analysis in Python
-* [click](https://click.palletsprojects.com): Python composable command-line interface toolkit
-* [Graphviz](https://github.com/xflr6/graphviz): Simple Python interface for Graphviz
+* [click](https://click.palletsprojects.com): Python composable
+  command-line interface toolkit
+* [Graphviz](https://github.com/xflr6/graphviz): Simple Python interface
+  for Graphviz
 
-## Contributing
+## Updates & Contributing
 
-Feel free to open issues and pull-requests.
-
-If you've found vizel useful, please consider [sponsoring](https://github.com/sponsors/BasilPH) maintenance and further development.
+Feel free to open issues and pull-requests. Subscribe to the
+[vizel newsletter](https://tinyletter.com/vizel) to be informed about
+new releases and features in development.
 
 You can reach out to me for feedback or questions on
 [Twitter](https://twitter.com/BasilPH) or through
 [my website](https://interdimensional-television.com/).
+
+If you've found vizel useful, please consider
+[sponsoring](https://github.com/sponsors/BasilPH) maintenance and
+further development. Or
+[buying me a coffee](https://www.buymeacoffee.com/interdimension).
+
 
 ### Development install
 
@@ -107,8 +151,8 @@ Run `py.test` in the `tests` directory.
 
 ## Versioning
 
-Vizel uses [SemVer](http://semver.org/) for versioning. For the
-versions available, see the
+Vizel uses [SemVer](http://semver.org/) for versioning. For the versions
+available, see the
 [tags on the repository](https://github.com/BasilPH/vizel/tags).
 
 ## Authors
@@ -122,5 +166,7 @@ This project is licensed under GNU GPLv3.
 ## Acknowledgments
 
 * Thank you Christian Tietze and Sascha Fast for creating
-  [The Archive](https://zettelkasten.de/the-archive/) app and writing
-  a [book](https://zettelkasten.de/book/de/) (German only) on the Zettelkasten method.
+  [The Archive](https://zettelkasten.de/the-archive/) app and writing a
+  [book](https://zettelkasten.de/book/de/) (German only) on the
+  Zettelkasten method.
+
