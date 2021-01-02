@@ -116,3 +116,43 @@ def test_components(zettelkasten_directory, stderr_expected):
     assert result.stdout == stdout_expected.format(ext=expected_file_ending)
 
     assert result.stderr == stderr_expected.format(ext=expected_file_ending)
+
+
+def test_quiet_flag_stats(zettelkasten_directory):
+    for quiet_flag in ["-q", "--quiet"]:
+        runner = CliRunner(mix_stderr=False)
+        result = runner.invoke(main, ["stats", quiet_flag, zettelkasten_directory])
+
+        assert result.exit_code == 0
+        assert result.stderr == ""
+
+
+def test_quiet_flag_graph_pdf(zettelkasten_directory):
+    for quiet_flag in ["-q", "--quiet"]:
+        runner = CliRunner(mix_stderr=False)
+        pdf_path = "vizel_graph.pdf"
+        result = runner.invoke(main, ["graph-pdf", quiet_flag, zettelkasten_directory])
+
+        assert result.exit_code == 0
+        assert result.stderr == ""
+        assert stat(pdf_path).st_size > 0
+
+        unlink(pdf_path)
+
+
+def test_quiet_flag_unconnected(zettelkasten_directory):
+    for quiet_flag in ["-q", "--quiet"]:
+        runner = CliRunner(mix_stderr=False)
+        result = runner.invoke(main, ["unconnected", quiet_flag, zettelkasten_directory])
+
+        assert result.exit_code == 0
+        assert result.stderr == ""
+
+
+def test_quiet_flag_components(zettelkasten_directory):
+    for quiet_flag in ["-q", "--quiet"]:
+        runner = CliRunner(mix_stderr=False)
+        result = runner.invoke(main, ["components", quiet_flag, zettelkasten_directory])
+
+        assert result.exit_code == 0
+        assert result.stderr == ""
