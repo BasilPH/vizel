@@ -153,7 +153,7 @@ def _get_zero_degree_nodes(digraph):
     default="vizel_graph.pdf",
     help="Name of the PDF file the graph is written into. Default: vizel_graph.pdf",
 )
-@click.option("-q", "--quiet", is_Flag=True, default=False)
+@click.option("-q", "--quiet", is_flag=True, default=False)
 def graph_pdf(directory, quiet, pdf_name):
     """
     Generates a PDF of the graph spanned by Zettel in DIRECTORY.
