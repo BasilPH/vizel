@@ -20,7 +20,7 @@ def main():
     pass
 
 
-def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
+def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames, quiet=False):
     """
     Extracts references from a Zettel that match a reference and that point to exactly one existing file.
 
@@ -51,17 +51,13 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
         elif len(matching_zettel_filenames) > 1:
             click.echo(
                 'Skipping non-unique reference "{}" in {}. Candidates: {}'.format(
-                    reference_text,
-                    os.path.basename(zettel_path),
-                    ", ".join(matching_zettel_filenames),
+                    reference_text, os.path.basename(zettel_path), ", ".join(matching_zettel_filenames)
                 ),
                 err=True,
             )
         else:
             click.echo(
-                'No matching Zettel for reference "{}" in {}'.format(
-                    reference_text, os.path.basename(zettel_path)
-                ),
+                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path)),
                 err=True,
             )
     return references
@@ -77,23 +73,16 @@ def _load_references(zettel_path, zettel_directory_path):
     """
     references = []
     zettel_filenames = sorted(
-        [
-            os.path.basename(f)
-            for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-        ]
+        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))]
     )
 
     # Extract references for the [[ID]] link format
     # Look for [[, and then match anything that isn't ]]. End with ]].
-    references += _extract_valid_references(
-        "\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames
-    )
+    references += _extract_valid_references("\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames)
 
     # Extract references for the markdown link format
     # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
-    references += _extract_valid_references(
-        "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames
-    )
+    references += _extract_valid_references("\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames)
 
     return references
 
@@ -119,7 +108,7 @@ def _get_short_description(zettel_filename):
     return short_des
 
 
-def _get_digraph(zettel_directory_path):
+def _get_digraph(zettel_directory_path, quiet=False):
     """
     Parses the Zettel in `zettel_directory` and returns a digraph.
 
@@ -129,9 +118,7 @@ def _get_digraph(zettel_directory_path):
 
     digraph = nx.DiGraph()
 
-    for zettel_path in sorted(
-        glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-    ):
+    for zettel_path in sorted(glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))):
 
         zettel_filename = os.path.basename(zettel_path)
         short_des = _get_short_description(zettel_filename)
@@ -139,13 +126,12 @@ def _get_digraph(zettel_directory_path):
         digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
 
         try:
-            for reference_zettel_filename in _load_references(
-                zettel_path, zettel_directory_path
-            ):
+            for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
                 if zettel_filename != reference_zettel_filename:
                     digraph.add_edge(zettel_filename, reference_zettel_filename)
         except UnicodeDecodeError as e:
-            click.echo("Skipping {}: {}".format(zettel_filename, e), err=True)
+            if not quiet:
+                click.echo("Skipping {}: {}".format(zettel_filename, e), err=True)
     return digraph
 
 
@@ -167,7 +153,8 @@ def _get_zero_degree_nodes(digraph):
     default="vizel_graph.pdf",
     help="Name of the PDF file the graph is written into. Default: vizel_graph.pdf",
 )
-def graph_pdf(directory, pdf_name):
+@click.option("-q", "--quiet", is_Flag=True, default=False)
+def graph_pdf(directory, quiet, pdf_name):
     """
     Generates a PDF of the graph spanned by Zettel in DIRECTORY.
     \f
@@ -177,7 +164,7 @@ def graph_pdf(directory, pdf_name):
     :return None
     """
 
-    digraph = _get_digraph(directory)
+    digraph = _get_digraph(directory, quiet)
 
     dot = Digraph(comment="Zettelkasten Graph")
 
@@ -219,11 +206,7 @@ def stats(directory):
     n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
     click.echo("{} Zettel with no references".format(n_nodes_no_edges))
 
-    click.echo(
-        "{} connected components".format(
-            nx.number_connected_components(digraph.to_undirected())
-        )
-    )
+    click.echo("{} connected components".format(nx.number_connected_components(digraph.to_undirected())))
 
 
 @main.command(short_help="Zettel without references")
