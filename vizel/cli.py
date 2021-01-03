@@ -9,6 +9,64 @@ import six
 from graphviz import Digraph
 
 
+class Logger:
+    """
+    This class wraps `click.echo` and provides two log-levels: info and warning.
+
+    The class is instantiated with `Logger.initialize`. If `suppress_warnings=True` is passed, all calls to `warning`
+    will not result in any output.
+
+    After initialization the singleton instance needs to be retrieved with `Logger.get`.
+    """
+
+    __instance = None
+
+    def __init__(self, suppress_warnings):
+        if Logger.__instance is not None:
+            return
+        self.suppress_warnings = suppress_warnings
+        Logger.__instance = self
+
+    @staticmethod
+    def initialize(suppress_warnings):
+        """
+        Initialize the Logger singleton instance.
+
+        :param suppress_warnings: If set to `True`, all calls to `warning` will not result in any output.
+        :return: None
+        """
+        Logger(suppress_warnings)
+
+    @staticmethod
+    def get():
+        """
+        Returns a singleton Logger instance. `Logger.initialize` must have been called at least once before.
+
+        :return: Logger instance
+        """
+        if Logger.__instance is None:
+            raise Exception("Logger not initialized. Call `initialize` first.")
+        return Logger.__instance
+
+    def info(self, message):
+        """
+        Prints a message to stdout using `click.echo`.
+
+        :param message: Info message to be printed.
+        :return: None
+        """
+        click.echo(message)
+
+    def warning(self, message):
+        """
+        Prints a message to stderr using `click.echo`. If `suppress_warnings=True`, nothing is printed.
+        :param message: Warning message to be printed.
+        :return: None
+        """
+        if not self.suppress_warnings:
+            click.echo(message, err=True)
+
+
 @click.group()
 def main():
     """
@@ -20,7 +78,7 @@ def main():
     pass
 
 
-def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames, quiet=False):
+def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     """
     Extracts references from a Zettel that match a reference and that point to exactly one existing file.
 
@@ -31,6 +89,9 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames, q
     :param zettel_filenames: List of filenames in the Zettel directory.
     :return: Filenames of Zettel that are referenced.
     """
+
+    logger = Logger.get()
+
     references = []
     with open(zettel_path, "r") as zettel_file:
         zettel_text = zettel_file.read()
@@ -49,16 +110,14 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames, q
         if len(matching_zettel_filenames) == 1:
             references += matching_zettel_filenames
         elif len(matching_zettel_filenames) > 1:
-            click.echo(
+            logger.warning(
                 'Skipping non-unique reference "{}" in {}. Candidates: {}'.format(
                     reference_text, os.path.basename(zettel_path), ", ".join(matching_zettel_filenames)
-                ),
-                err=True,
+                )
             )
         else:
-            click.echo(
-                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path)),
-                err=True,
+            logger.warning(
+                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path))
             )
     return references
 
@@ -108,14 +167,14 @@ def _get_short_description(zettel_filename):
     return short_des
 
 
-def _get_digraph(zettel_directory_path, quiet=False):
+def _get_digraph(zettel_directory_path):
     """
     Parses the Zettel in `zettel_directory` and returns a digraph.
 
     :param zettel_directory_path Path to directory where the Zettel are stored.
     :return DiGraph object representing the Zettel graph.
     """
-
+    logger = Logger.get()
     digraph = nx.DiGraph()
 
     for zettel_path in sorted(glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))):
@@ -130,8 +189,7 @@ def _get_digraph(zettel_directory_path, quiet=False):
                 if zettel_filename != reference_zettel_filename:
                     digraph.add_edge(zettel_filename, reference_zettel_filename)
         except UnicodeDecodeError as e:
-            if not quiet:
-                click.echo("Skipping {}: {}".format(zettel_filename, e), err=True)
+            logger.warning("Skipping {}: {}".format(zettel_filename, e))
     return digraph
 
 
@@ -153,8 +211,7 @@ def _get_zero_degree_nodes(digraph):
     default="vizel_graph.pdf",
     help="Name of the PDF file the graph is written into. Default: vizel_graph.pdf",
 )
-@click.option("-q", "--quiet", is_flag=True, default=False)
-def graph_pdf(directory, quiet, pdf_name):
+def graph_pdf(directory, pdf_name):
     """
     Generates a PDF of the graph spanned by Zettel in DIRECTORY.
     \f
@@ -164,7 +221,7 @@ def graph_pdf(directory, quiet, pdf_name):
     :return None
     """
 
-    digraph = _get_digraph(directory, quiet)
+    digraph = _get_digraph(directory)
 
     dot = Digraph(comment="Zettelkasten Graph")
 
@@ -197,16 +254,17 @@ def stats(directory):
     :param directory: Directory where all the Zettel are.
     :return None
     """
-
+    Logger.initialize(False)
+    logger = Logger.get()
     digraph = _get_digraph(directory)
 
-    click.echo("{} Zettel".format(digraph.number_of_nodes()))
-    click.echo("{} references between Zettel".format(digraph.number_of_edges()))
+    logger.info("{} Zettel".format(digraph.number_of_nodes()))
+    logger.info("{} references between Zettel".format(digraph.number_of_edges()))
 
     n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
-    click.echo("{} Zettel with no references".format(n_nodes_no_edges))
+    logger.info("{} Zettel with no references".format(n_nodes_no_edges))
 
-    click.echo("{} connected components".format(nx.number_connected_components(digraph.to_undirected())))
+    logger.info("{} connected components".format(nx.number_connected_components(digraph.to_undirected())))
 
 
 @main.command(short_help="Zettel without references")
@@ -220,13 +278,14 @@ def unconnected(directory):
     :param directory: Directory where all the Zettel are.
     :return None
     """
-
+    Logger.initialize(False)
+    logger = Logger.get()
     digraph = _get_digraph(directory)
 
     zero_degree_nodes = _get_zero_degree_nodes(digraph)
 
     for node in sorted(zero_degree_nodes):
-        click.echo("{}".format(node))
+        logger.info("{}".format(node))
 
 
 @main.command(short_help="Connected components")
@@ -240,6 +299,8 @@ def components(directory):
     :param directory: Directory where all the Zettel are.
     :return None
     """
+    Logger.initialize(False)
+    logger = Logger.get()
     digraph = _get_digraph(directory)
     undirected_graph = digraph.to_undirected()
 
@@ -253,8 +314,8 @@ def components(directory):
     conn_components = sorted(conn_components, key=len, reverse=True)
 
     for i, component in enumerate(conn_components, start=1):
-        click.echo("# Component {}".format(i))
+        logger.info("# Component {}".format(i))
         for zettel in component:
-            click.echo(zettel)
+            logger.info(zettel)
 
-        click.echo()
+        logger.info("")

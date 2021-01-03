@@ -7,7 +7,7 @@ from click.testing import CliRunner
 from vizel.cli import main
 
 
-@pytest.fixture(params=["data/zettelkasten_md/", "data/zettelkasten_txt/"])
+@pytest.fixture(params=["data/zettelkasten_txt/", "data/zettelkasten_md/"])
 def zettelkasten_directory(request):
     # Path to the `tests` folder
     base_dir = path.dirname(path.abspath(__file__))
