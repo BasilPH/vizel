@@ -9,4 +9,4 @@ vizel.egg-info/
 *.pyc
 .python-version
 
-tests/vizel_graph.pdf
+vizel_graph.pdf
