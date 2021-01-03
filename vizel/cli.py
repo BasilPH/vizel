@@ -22,8 +22,6 @@ class Logger:
     __instance = None
 
     def __init__(self, suppress_warnings):
-        if Logger.__instance is not None:
-            return
         self.suppress_warnings = suppress_warnings
         Logger.__instance = self
 
@@ -239,7 +237,8 @@ def graph_pdf(directory, pdf_name):
 
 @main.command(short_help="Stats of Zettel graph")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
-def stats(directory):
+@click.option("-q", "--quiet", is_flag=True, help="Quiet mode")
+def stats(directory, quiet):
     """
     Prints the stats of the graph spanned by Zettel in DIRECTORY.
 
@@ -251,10 +250,11 @@ def stats(directory):
     - Number of connected components
     \f
 
+    :param quiet: When set to True, warnings will not be printed.
     :param directory: Directory where all the Zettel are.
     :return None
     """
-    Logger.initialize(False)
+    Logger.initialize(suppress_warnings=quiet)
     logger = Logger.get()
     digraph = _get_digraph(directory)
 
@@ -269,16 +269,18 @@ def stats(directory):
 
 @main.command(short_help="Zettel without references")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
-def unconnected(directory):
+@click.option("-q", "--quiet", is_flag=True, default=False, help="Quiet mode")
+def unconnected(directory, quiet):
     """
     Prints all of the Zettel in DIRECTORY that have no in- or outgoing references.
 
     \f
 
     :param directory: Directory where all the Zettel are.
+    :param quiet: When set to True, warnings will not be printed.
     :return None
     """
-    Logger.initialize(False)
+    Logger.initialize(suppress_warnings=quiet)
     logger = Logger.get()
     digraph = _get_digraph(directory)
 
@@ -290,16 +292,18 @@ def unconnected(directory):
 
 @main.command(short_help="Connected components")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
-def components(directory):
+@click.option("-q", "--quiet", is_flag=True, default=False, help="Quiet mode")
+def components(directory, quiet):
     """
     Lists the connected components and their Zettel in DIRECTORY.
 
     \f
 
     :param directory: Directory where all the Zettel are.
+    :param quiet: When set to True, warnings will not be printed.
     :return None
     """
-    Logger.initialize(False)
+    Logger.initialize(suppress_warnings=quiet)
     logger = Logger.get()
     digraph = _get_digraph(directory)
     undirected_graph = digraph.to_undirected()
