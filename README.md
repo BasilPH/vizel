@@ -148,6 +148,13 @@ The project uses [Poetry](https://python-poetry.org/).
 
 Run `py.test` in the `tests` directory.
 
+### Running vizel
+
+There is a poetry script created in order to run vizel for development purposes:
+
+```bash
+poetry run vizel
+```
 
 ## Versioning
 
@@ -158,7 +165,8 @@ available, see the
 ## Authors
 
 * **Basil Philipp** - *Owner*
-
+* **Daniel Mathiot** - Contributor [danymat](https://github.com/danymat)
+    
 ## License
 
 This project is licensed under GNU GPLv3.

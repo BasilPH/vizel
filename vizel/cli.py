@@ -67,7 +67,7 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     return references
 
 
-def _load_references(zettel_path, zettel_directory_path):
+def _load_references(zettel_path, zettel_directory_path, nourls=False):
     """
     Parses the content of `zettel_path` for references to other Zettel.
 
@@ -91,9 +91,10 @@ def _load_references(zettel_path, zettel_directory_path):
 
     # Extract references for the markdown link format
     # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
-    references += _extract_valid_references(
-        "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames
-    )
+    if not nourls:
+        references += _extract_valid_references(
+            "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames
+        )
 
     return references
 
@@ -119,7 +120,7 @@ def _get_short_description(zettel_filename):
     return short_des
 
 
-def _get_digraph(zettel_directory_path):
+def _get_digraph(zettel_directory_path, nourls=False):
     """
     Parses the Zettel in `zettel_directory` and returns a digraph.
 
@@ -140,7 +141,7 @@ def _get_digraph(zettel_directory_path):
 
         try:
             for reference_zettel_filename in _load_references(
-                zettel_path, zettel_directory_path
+                zettel_path, zettel_directory_path, nourls=nourls
             ):
                 if zettel_filename != reference_zettel_filename:
                     digraph.add_edge(zettel_filename, reference_zettel_filename)
@@ -195,7 +196,12 @@ def graph_pdf(directory, pdf_name):
 
 @main.command(short_help="Stats of Zettel graph")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
-def stats(directory):
+@click.option(
+    "--nourls",
+    is_flag=True,
+    help="Specify --nourls if you don't want the urls to be fetched",
+)
+def stats(directory, nourls):
     """
     Prints the stats of the graph spanned by Zettel in DIRECTORY.
 
@@ -208,10 +214,11 @@ def stats(directory):
     \f
 
     :param directory: Directory where all the Zettel are.
+    :param nourls: If you dont want to fetch urls in your zettels. Caution: it will not fetch single brackets.
     :return None
     """
 
-    digraph = _get_digraph(directory)
+    digraph = _get_digraph(directory, nourls=nourls)
 
     click.echo("{} Zettel".format(digraph.number_of_nodes()))
     click.echo("{} references between Zettel".format(digraph.number_of_edges()))
