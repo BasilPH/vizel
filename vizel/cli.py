@@ -9,6 +9,62 @@ import six
 from graphviz import Digraph
 
 
+class Logger:
+    """
+    This class wraps `click.echo` and provides two log-levels: info and warning.
+
+    The class is instantiated with `Logger.initialize`. If `suppress_warnings=True` is passed, all calls to `warning`
+    will not result in any output.
+
+    After initialization the singleton instance needs to be retrieved with `Logger.get`.
+    """
+
+    __instance = None
+
+    def __init__(self, suppress_warnings):
+        self.suppress_warnings = suppress_warnings
+        Logger.__instance = self
+
+    @staticmethod
+    def initialize(suppress_warnings):
+        """
+        Initialize the Logger singleton instance.
+
+        :param suppress_warnings: If set to `True`, all calls to `warning` will not result in any output.
+        :return: None
+        """
+        Logger(suppress_warnings)
+
+    @staticmethod
+    def get():
+        """
+        Returns a singleton Logger instance. `Logger.initialize` must have been called at least once before.
+
+        :return: Logger instance
+        """
+        if Logger.__instance is None:
+            raise Exception("Logger not initialized. Call `initialize` first.")
+        return Logger.__instance
+
+    def info(self, message):
+        """
+        Prints a message to stdout using `click.echo`.
+
+        :param message: Info message to be printed.
+        :return: None
+        """
+        click.echo(message)
+
+    def warning(self, message):
+        """
+        Prints a message to stderr using `click.echo`. If `suppress_warnings=True`, nothing is printed.
+        :param message: Warning message to be printed.
+        :return: None
+        """
+        if not self.suppress_warnings:
+            click.echo(message, err=True)
+
+
 @click.group()
 def main():
     """
@@ -31,6 +87,9 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     :param zettel_filenames: List of filenames in the Zettel directory.
     :return: Filenames of Zettel that are referenced.
     """
+
+    logger = Logger.get()
+
     references = []
     with open(zettel_path, "r") as zettel_file:
         zettel_text = zettel_file.read()
@@ -49,20 +108,14 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
         if len(matching_zettel_filenames) == 1:
             references += matching_zettel_filenames
         elif len(matching_zettel_filenames) > 1:
-            click.echo(
+            logger.warning(
                 'Skipping non-unique reference "{}" in {}. Candidates: {}'.format(
-                    reference_text,
-                    os.path.basename(zettel_path),
-                    ", ".join(matching_zettel_filenames),
-                ),
-                err=True,
+                    reference_text, os.path.basename(zettel_path), ", ".join(matching_zettel_filenames)
+                )
             )
         else:
-            click.echo(
-                'No matching Zettel for reference "{}" in {}'.format(
-                    reference_text, os.path.basename(zettel_path)
-                ),
-                err=True,
+            logger.warning(
+                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path))
             )
     return references
 
@@ -77,23 +130,16 @@ def _load_references(zettel_path, zettel_directory_path):
     """
     references = []
     zettel_filenames = sorted(
-        [
-            os.path.basename(f)
-            for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-        ]
+        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))]
     )
 
     # Extract references for the [[ID]] link format
     # Look for [[, and then match anything that isn't ]]. End with ]].
-    references += _extract_valid_references(
-        "\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames
-    )
+    references += _extract_valid_references("\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames)
 
     # Extract references for the markdown link format
     # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
-    references += _extract_valid_references(
-        "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames
-    )
+    references += _extract_valid_references("\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames)
 
     return references
 
@@ -126,12 +172,10 @@ def _get_digraph(zettel_directory_path):
     :param zettel_directory_path Path to directory where the Zettel are stored.
     :return DiGraph object representing the Zettel graph.
     """
-
+    logger = Logger.get()
     digraph = nx.DiGraph()
 
-    for zettel_path in sorted(
-        glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-    ):
+    for zettel_path in sorted(glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))):
 
         zettel_filename = os.path.basename(zettel_path)
         short_des = _get_short_description(zettel_filename)
@@ -139,13 +183,11 @@ def _get_digraph(zettel_directory_path):
         digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
 
         try:
-            for reference_zettel_filename in _load_references(
-                zettel_path, zettel_directory_path
-            ):
+            for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
                 if zettel_filename != reference_zettel_filename:
                     digraph.add_edge(zettel_filename, reference_zettel_filename)
         except UnicodeDecodeError as e:
-            click.echo("Skipping {}: {}".format(zettel_filename, e), err=True)
+            logger.warning("Skipping {}: {}".format(zettel_filename, e))
     return digraph
 
 
@@ -195,7 +237,8 @@ def graph_pdf(directory, pdf_name):
 
 @main.command(short_help="Stats of Zettel graph")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
-def stats(directory):
+@click.option("-q", "--quiet", is_flag=True, help="Quiet mode")
+def stats(directory, quiet):
     """
     Prints the stats of the graph spanned by Zettel in DIRECTORY.
 
@@ -207,56 +250,61 @@ def stats(directory):
     - Number of connected components
     \f
 
+    :param quiet: When set to True, warnings will not be printed.
     :param directory: Directory where all the Zettel are.
     :return None
     """
-
+    Logger.initialize(suppress_warnings=quiet)
+    logger = Logger.get()
     digraph = _get_digraph(directory)
 
-    click.echo("{} Zettel".format(digraph.number_of_nodes()))
-    click.echo("{} references between Zettel".format(digraph.number_of_edges()))
+    logger.info("{} Zettel".format(digraph.number_of_nodes()))
+    logger.info("{} references between Zettel".format(digraph.number_of_edges()))
 
     n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
-    click.echo("{} Zettel with no references".format(n_nodes_no_edges))
+    logger.info("{} Zettel with no references".format(n_nodes_no_edges))
 
-    click.echo(
-        "{} connected components".format(
-            nx.number_connected_components(digraph.to_undirected())
-        )
-    )
+    logger.info("{} connected components".format(nx.number_connected_components(digraph.to_undirected())))
 
 
 @main.command(short_help="Zettel without references")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
-def unconnected(directory):
+@click.option("-q", "--quiet", is_flag=True, default=False, help="Quiet mode")
+def unconnected(directory, quiet):
     """
     Prints all of the Zettel in DIRECTORY that have no in- or outgoing references.
 
     \f
 
     :param directory: Directory where all the Zettel are.
+    :param quiet: When set to True, warnings will not be printed.
     :return None
     """
-
+    Logger.initialize(suppress_warnings=quiet)
+    logger = Logger.get()
     digraph = _get_digraph(directory)
 
     zero_degree_nodes = _get_zero_degree_nodes(digraph)
 
     for node in sorted(zero_degree_nodes):
-        click.echo("{}".format(node))
+        logger.info("{}".format(node))
 
 
 @main.command(short_help="Connected components")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
-def components(directory):
+@click.option("-q", "--quiet", is_flag=True, default=False, help="Quiet mode")
+def components(directory, quiet):
     """
     Lists the connected components and their Zettel in DIRECTORY.
 
     \f
 
     :param directory: Directory where all the Zettel are.
+    :param quiet: When set to True, warnings will not be printed.
     :return None
     """
+    Logger.initialize(suppress_warnings=quiet)
+    logger = Logger.get()
     digraph = _get_digraph(directory)
     undirected_graph = digraph.to_undirected()
 
@@ -270,8 +318,8 @@ def components(directory):
     conn_components = sorted(conn_components, key=len, reverse=True)
 
     for i, component in enumerate(conn_components, start=1):
-        click.echo("# Component {}".format(i))
+        logger.info("# Component {}".format(i))
         for zettel in component:
-            click.echo(zettel)
+            logger.info(zettel)
 
-        click.echo()
+        logger.info("")
