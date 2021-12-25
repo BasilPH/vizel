@@ -117,9 +117,7 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
             )
         else:
             logger.warning(
-                'No matching Zettel for reference "{}" in {}'.format(
-                    reference_text, os.path.basename(zettel_path)
-                )
+                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path))
             )
     return references
 
@@ -134,23 +132,16 @@ def _load_references(zettel_path, zettel_directory_path):
     """
     references = []
     zettel_filenames = sorted(
-        [
-            os.path.basename(f)
-            for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-        ]
+        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))]
     )
 
     # Extract references for the [[ID]] link format
     # Look for [[, and then match anything that isn't ]]. End with ]].
-    references += _extract_valid_references(
-        "\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames
-    )
+    references += _extract_valid_references("\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames)
 
     # Extract references for the markdown link format
     # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
-    references += _extract_valid_references(
-        "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames
-    )
+    references += _extract_valid_references("\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames)
 
     return references
 
@@ -186,19 +177,23 @@ def _get_digraph(zettel_directory_path):
     logger = Logger.get()
     digraph = nx.DiGraph()
 
-    for zettel_path in sorted(
-        glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-    ):
+    for zettel_path in sorted(glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))):
 
         zettel_filename = os.path.basename(zettel_path)
         short_des = _get_short_description(zettel_filename)
+        zettel_content = ""
+        try:
+            with open(zettel_path, "r") as zettel_file:
+                zettel_content = zettel_file.read()
+                if six.PY2:
+                    zettel_content = unicode(zettel_text, errors="strict")
+        except UnicodeDecodeError as e:
+            pass
 
-        digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
+        digraph.add_node(zettel_filename, content=zettel_content, short_description=short_des, path=zettel_path)
 
         try:
-            for reference_zettel_filename in _load_references(
-                zettel_path, zettel_directory_path
-            ):
+            for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
                 if zettel_filename != reference_zettel_filename:
                     digraph.add_edge(zettel_filename, reference_zettel_filename)
         except UnicodeDecodeError as e:
@@ -228,25 +223,15 @@ def _get_total_word_count(digraph):
     word_count = 0
     for (node, data) in digraph.nodes(data=True):
         previous_is_space = True
-        try:
-            with open(data["path"], "r") as zettel_file:
-                zettel_text = zettel_file.read()
-                zettel_word_count = 0
-                # Internally we only want to deal with unicode
-                if six.PY2:
-                    zettel_text = unicode(zettel_text, errors="strict")
-
-                for character in zettel_text:
-                    if character.isspace():
-                        previous_is_space = True
-                    else:
-                        if previous_is_space:
-                            zettel_word_count += 1
-                        previous_is_space = False
-            word_count += zettel_word_count
-        except UnicodeDecodeError as e:
-            continue
-
+        zettel_word_count = 0
+        for character in data["content"]:
+            if character.isspace():
+                previous_is_space = True
+            else:
+                if previous_is_space:
+                    zettel_word_count += 1
+                previous_is_space = False
+        word_count += zettel_word_count
     return word_count
 
 
@@ -302,7 +287,6 @@ def stats(directory, quiet):
     :param directory: Directory where all the Zettel are.
     :return None
     """
-    # TODO Move logger into global scope
     Logger.initialize(suppress_warnings=quiet)
     logger = Logger.get()
     digraph = _get_digraph(directory)
@@ -313,11 +297,7 @@ def stats(directory, quiet):
     n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
     logger.info("{} Zettel with no references".format(n_nodes_no_edges))
 
-    logger.info(
-        "{} connected components".format(
-            nx.number_connected_components(digraph.to_undirected())
-        )
-    )
+    logger.info("{} connected components".format(nx.number_connected_components(digraph.to_undirected())))
 
     logger.info("{} words".format(_get_total_word_count(digraph)))
 
