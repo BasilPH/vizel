@@ -214,7 +214,9 @@ def _get_zero_degree_nodes(digraph):
 
 def _get_total_word_count(digraph):
     """
-    Get the total number of words in all the Zettel. Aims to match the results from the `wc` utility.
+    Get the total number of words in all the Zettel. Aims to match the results from the `wc` utility. Per `man wc`,
+    the function iswspace(3) is used to determine the word boundaries. We are using `str.isspace`, which seems to behave
+    the same on our (small) test set.
 
     :param digraph: DiGraph object representing the Zettel graph.
     :return: Total number of words of all the Zettel in `digraph`.
@@ -281,6 +283,7 @@ def stats(directory, quiet):
     - Number of references between Zettel (including bi-directional and duplicate)
     - Number of Zettel without any reference from or to a Zettel
     - Number of connected components
+    - Number of words in all the Zettel (aims to match the `wc` command)
     \f
 
     :param quiet: When set to True, warnings will not be printed.
