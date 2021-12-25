@@ -8,3 +8,5 @@ vizel.egg-info/
 
 *.pyc
 .python-version
+
+vizel_graph.pdf

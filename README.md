@@ -66,7 +66,8 @@ Usage: vizel stats [OPTIONS] DIRECTORY
   - Number of connected components
   
 Options:
-  --help  Show this message and exit.
+  -q, --quiet  Quiet mode
+  --help       Show this message and exit.
 ```
 
 ##### A note on connected components
@@ -98,7 +99,8 @@ Usage: vizel unconnected [OPTIONS] DIRECTORY
   references.
 
 Options:
-  --help  Show this message and exit.
+  -q, --quiet  Quiet mode
+  --help       Show this message and exit.
 ```
 
 #### components
@@ -109,7 +111,8 @@ Usage: vizel components [OPTIONS] DIRECTORY
   Lists the connected components and their Zettel in DIRECTORY.
 
 Options:
-  --help  Show this message and exit.
+  -q, --quiet  Quiet mode
+  --help       Show this message and exit.
 ```
 
 ## Built With
