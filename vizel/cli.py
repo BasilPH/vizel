@@ -76,12 +76,14 @@ def main():
     pass
 
 
-def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
+def _extract_valid_references(zettel_content, reference_regexp, zettel_path, zettel_filenames):
     """
     Extracts references from a Zettel that match a reference and that point to exactly one existing file.
 
     Throws a UnicodeDecodeError if the file content can't be converted to unicode.
 
+    :param zettel_content: File content of the Zettel.
+    :param zettel_path: Path to the Zettel we parse for references.
     :param reference_regexp: Regexp that matches the references with one matching group.
     :param zettel_path: Path to the Zettel we parse for references.
     :param zettel_filenames: List of filenames in the Zettel directory.
@@ -91,14 +93,8 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     logger = Logger.get()
 
     references = []
-    with open(zettel_path, "r") as zettel_file:
-        zettel_text = zettel_file.read()
 
-        # Internally we only want to deal with unicode
-        if six.PY2:
-            zettel_text = unicode(zettel_text, errors="strict")
-
-    reference_texts = re.findall(reference_regexp, zettel_text)
+    reference_texts = re.findall(reference_regexp, zettel_content)
     for reference_text in reference_texts:
         matching_zettel_filenames = []
         for zettel_filename in zettel_filenames:
@@ -122,10 +118,11 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     return references
 
 
-def _load_references(zettel_path, zettel_directory_path):
+def _load_references(zettel_content, zettel_path, zettel_directory_path):
     """
     Parses the content of `zettel_path` for references to other Zettel.
 
+    :param zettel_content: File content of the Zettel.
     :param zettel_path: Path to the Zettel we parse for references.
     :param zettel_directory_path Path to directory where the Zettel are stored.
     :return List of filenames of referenced Zettel.
@@ -137,11 +134,11 @@ def _load_references(zettel_path, zettel_directory_path):
 
     # Extract references for the [[ID]] link format
     # Look for [[, and then match anything that isn't ]]. End with ]].
-    references += _extract_valid_references("\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames)
+    references += _extract_valid_references(zettel_content, "\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames)
 
     # Extract references for the markdown link format
     # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
-    references += _extract_valid_references("\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames)
+    references += _extract_valid_references(zettel_content,"\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames)
 
     return references
 
@@ -188,16 +185,13 @@ def _get_digraph(zettel_directory_path):
                 if six.PY2:
                     zettel_content = unicode(zettel_text, errors="strict")
         except UnicodeDecodeError as e:
-            pass
+            logger.warning("Skipping {}: {}".format(zettel_filename, e))
 
         digraph.add_node(zettel_filename, content=zettel_content, short_description=short_des, path=zettel_path)
 
-        try:
-            for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
-                if zettel_filename != reference_zettel_filename:
-                    digraph.add_edge(zettel_filename, reference_zettel_filename)
-        except UnicodeDecodeError as e:
-            logger.warning("Skipping {}: {}".format(zettel_filename, e))
+        for reference_zettel_filename in _load_references(zettel_content, zettel_path, zettel_directory_path):
+            if zettel_filename != reference_zettel_filename:
+                digraph.add_edge(zettel_filename, reference_zettel_filename)
     return digraph
 
 
