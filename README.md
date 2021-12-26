@@ -25,7 +25,7 @@ now supported as well, thanks to the help from the community.
 
 ### Installing
 
-Run `pip install vizel`
+Run `pip install vizel`. Vizel supports Python 2.7 and 3.6 - 3.10.
 
 If you get an error about missing graphviz when running the `graph-pdf`
 command, you might need to install it with
