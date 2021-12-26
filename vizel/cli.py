@@ -132,6 +132,8 @@ def _load_references(zettel_content, zettel_path, zettel_directory_path):
     :return List of filenames of referenced Zettel.
     """
     references = []
+    if not zettel_content:
+        return references
     zettel_filenames = sorted(
         [
             os.path.basename(f)
@@ -199,7 +201,7 @@ def _get_digraph(zettel_directory_path):
                     zettel_content = unicode(zettel_content, errors="strict")
         except UnicodeDecodeError as e:
             logger.warning("Skipping {}: {}".format(zettel_filename, e))
-
+            zettel_content = ""
         digraph.add_node(
             zettel_filename,
             content=zettel_content,
