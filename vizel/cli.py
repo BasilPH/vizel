@@ -196,7 +196,7 @@ def _get_digraph(zettel_directory_path):
             with open(zettel_path, "r") as zettel_file:
                 zettel_content = zettel_file.read()
                 if six.PY2:
-                    zettel_content = unicode(zettel_text, errors="strict")
+                    zettel_content = unicode(zettel_content, errors="strict")
         except UnicodeDecodeError as e:
             logger.warning("Skipping {}: {}".format(zettel_filename, e))
 
