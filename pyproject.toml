@@ -29,7 +29,7 @@ six="^1.14.0"
 [tool.poetry.dev-dependencies]
 pytest = [ 
             {version =  "^4.6", python="^2.7"},
-            {version =  "^5.2", python="^3.6"}
+            {version =  "*", python="^3.6"}
         ]
 
 [tool.poetry.scripts]
