@@ -76,9 +76,7 @@ def main():
     pass
 
 
-def _extract_valid_references(
-    zettel_content, reference_regexp, zettel_path, zettel_filenames
-):
+def _extract_valid_references(zettel_content, reference_regexp, zettel_path, zettel_filenames):
     """
     Extracts references from a Zettel that match a reference and that point to exactly one existing file.
 
@@ -115,9 +113,7 @@ def _extract_valid_references(
             )
         else:
             logger.warning(
-                'No matching Zettel for reference "{}" in {}'.format(
-                    reference_text, os.path.basename(zettel_path)
-                )
+                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path))
             )
     return references
 
@@ -135,23 +131,18 @@ def _load_references(zettel_content, zettel_path, zettel_directory_path):
     if not zettel_content:
         return references
     zettel_filenames = sorted(
-        [
-            os.path.basename(f)
-            for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-        ]
+        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))]
     )
 
     # Extract references for the [[ID]] link format
-    # Look for [[, and then match anything that isn't ]]. End with ]].
-    references += _extract_valid_references(
-        zettel_content, "\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames
-    )
+    # Look for [[, and then match anything that isn't ] or |. End with ]].
+    # [^\]]* is only necessary in case the link is renamed with |. It matches the new name, which we ignore in the
+    # result by not including it in the matching group.
+    references += _extract_valid_references(zettel_content, "\[\[([^\]\|]+)[^\]]*\]\]", zettel_path, zettel_filenames)
 
     # Extract references for the markdown link format
     # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
-    references += _extract_valid_references(
-        zettel_content, "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames
-    )
+    references += _extract_valid_references(zettel_content, "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames)
 
     return references
 
@@ -187,9 +178,7 @@ def _get_digraph(zettel_directory_path):
     logger = Logger.get()
     digraph = nx.DiGraph()
 
-    for zettel_path in sorted(
-        glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
-    ):
+    for zettel_path in sorted(glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))):
 
         zettel_filename = os.path.basename(zettel_path)
         short_des = _get_short_description(zettel_filename)
@@ -209,9 +198,7 @@ def _get_digraph(zettel_directory_path):
             path=zettel_path,
         )
 
-        for reference_zettel_filename in _load_references(
-            zettel_content, zettel_path, zettel_directory_path
-        ):
+        for reference_zettel_filename in _load_references(zettel_content, zettel_path, zettel_directory_path):
             if zettel_filename != reference_zettel_filename:
                 digraph.add_edge(zettel_filename, reference_zettel_filename)
     return digraph
@@ -316,11 +303,7 @@ def stats(directory, quiet):
     n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
     logger.info("{} Zettel with no references".format(n_nodes_no_edges))
 
-    logger.info(
-        "{} connected components".format(
-            nx.number_connected_components(digraph.to_undirected())
-        )
-    )
+    logger.info("{} connected components".format(nx.number_connected_components(digraph.to_undirected())))
 
     logger.info("{} words".format(_get_total_word_count(digraph)))
 

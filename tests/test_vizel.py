@@ -3,6 +3,7 @@ from os import stat, unlink, path
 import pytest
 import six
 from click.testing import CliRunner
+
 from vizel.cli import main
 
 
@@ -38,9 +39,7 @@ def stderr_expected(zettelkasten_directory):
         "202006112225_broken_utf8.{ext}\n"
     )
 
-    stderr_out += (
-        python2_unicode_decode_message if six.PY2 else python3_unicode_decode_message
-    )
+    stderr_out += python2_unicode_decode_message if six.PY2 else python3_unicode_decode_message
 
     return stderr_out.format(ext=expected_file_ending)
 
@@ -55,7 +54,7 @@ def test_stats(zettelkasten_directory, stderr_expected):
         "6 references between Zettel\n"
         "2 Zettel with no references\n"
         "3 connected components\n"
-        "257 words\n"
+        "258 words\n"
     )
     assert result.stdout == stdout_output
 
@@ -76,9 +75,7 @@ def test_graph_pdf_default(zettelkasten_directory):
 def test_graph_pdf_set_name(tmp_path, zettelkasten_directory):
     runner = CliRunner()
     pdf_path = path.join(str(tmp_path), "zettelkasten_custom_name.pdf")
-    result = runner.invoke(
-        main, ["graph-pdf", zettelkasten_directory, "--pdf-name", pdf_path]
-    )
+    result = runner.invoke(main, ["graph-pdf", zettelkasten_directory, "--pdf-name", pdf_path])
 
     assert result.exit_code == 0
     assert stat(pdf_path).st_size > 0
@@ -94,9 +91,7 @@ def test_unconnected(zettelkasten_directory, stderr_expected):
 
     expected_file_ending = zettelkasten_directory.rpartition("_")[2].rstrip("/")
 
-    stdout_expected = (
-        "202005011017_All_by_myself.{ext}\n" "202006112225_broken_utf8.{ext}\n"
-    )
+    stdout_expected = "202005011017_All_by_myself.{ext}\n" "202006112225_broken_utf8.{ext}\n"
     assert result.stdout == stdout_expected.format(ext=expected_file_ending)
 
     assert result.stderr == stderr_expected.format(ext=expected_file_ending)
@@ -139,9 +134,7 @@ def test_quiet_flag_stats(zettelkasten_directory):
 def test_quiet_flag_unconnected(zettelkasten_directory):
     for quiet_flag in ["-q", "--quiet"]:
         runner = CliRunner(mix_stderr=False)
-        result = runner.invoke(
-            main, ["unconnected", quiet_flag, zettelkasten_directory]
-        )
+        result = runner.invoke(main, ["unconnected", quiet_flag, zettelkasten_directory])
 
         assert result.exit_code == 0
         assert result.stderr == ""
