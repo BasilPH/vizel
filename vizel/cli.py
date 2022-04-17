@@ -76,12 +76,16 @@ def main():
     pass
 
 
-def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
+def _extract_valid_references(
+    zettel_content, reference_regexp, zettel_path, zettel_filenames
+):
     """
     Extracts references from a Zettel that match a reference and that point to exactly one existing file.
 
     Throws a UnicodeDecodeError if the file content can't be converted to unicode.
 
+    :param zettel_content: File content of the Zettel.
+    :param zettel_path: Path to the Zettel we parse for references.
     :param reference_regexp: Regexp that matches the references with one matching group.
     :param zettel_path: Path to the Zettel we parse for references.
     :param zettel_filenames: List of filenames in the Zettel directory.
@@ -91,14 +95,8 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
     logger = Logger.get()
 
     references = []
-    with open(zettel_path, "r") as zettel_file:
-        zettel_text = zettel_file.read()
 
-        # Internally we only want to deal with unicode
-        if six.PY2:
-            zettel_text = unicode(zettel_text, errors="strict")
-
-    reference_texts = re.findall(reference_regexp, zettel_text)
+    reference_texts = re.findall(reference_regexp, zettel_content)
     for reference_text in reference_texts:
         matching_zettel_filenames = []
         for zettel_filename in zettel_filenames:
@@ -110,36 +108,50 @@ def _extract_valid_references(reference_regexp, zettel_path, zettel_filenames):
         elif len(matching_zettel_filenames) > 1:
             logger.warning(
                 'Skipping non-unique reference "{}" in {}. Candidates: {}'.format(
-                    reference_text, os.path.basename(zettel_path), ", ".join(matching_zettel_filenames)
+                    reference_text,
+                    os.path.basename(zettel_path),
+                    ", ".join(matching_zettel_filenames),
                 )
             )
         else:
             logger.warning(
-                'No matching Zettel for reference "{}" in {}'.format(reference_text, os.path.basename(zettel_path))
+                'No matching Zettel for reference "{}" in {}'.format(
+                    reference_text, os.path.basename(zettel_path)
+                )
             )
     return references
 
 
-def _load_references(zettel_path, zettel_directory_path):
+def _load_references(zettel_content, zettel_path, zettel_directory_path):
     """
     Parses the content of `zettel_path` for references to other Zettel.
 
+    :param zettel_content: File content of the Zettel.
     :param zettel_path: Path to the Zettel we parse for references.
     :param zettel_directory_path Path to directory where the Zettel are stored.
     :return List of filenames of referenced Zettel.
     """
     references = []
+    if not zettel_content:
+        return references
     zettel_filenames = sorted(
-        [os.path.basename(f) for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))]
+        [
+            os.path.basename(f)
+            for f in glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
+        ]
     )
 
     # Extract references for the [[ID]] link format
     # Look for [[, and then match anything that isn't ]]. End with ]].
-    references += _extract_valid_references("\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames)
+    references += _extract_valid_references(
+        zettel_content, "\[\[([^\]\]]+)\]\]", zettel_path, zettel_filenames
+    )
 
     # Extract references for the markdown link format
     # Look for [, and then match anything that isn't ]. Then look for ( and match anything that isn't ). End with ).
-    references += _extract_valid_references("\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames)
+    references += _extract_valid_references(
+        zettel_content, "\[[^\]]+\]\(([^\)]+)\)", zettel_path, zettel_filenames
+    )
 
     return references
 
@@ -175,19 +187,33 @@ def _get_digraph(zettel_directory_path):
     logger = Logger.get()
     digraph = nx.DiGraph()
 
-    for zettel_path in sorted(glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))):
+    for zettel_path in sorted(
+        glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
+    ):
 
         zettel_filename = os.path.basename(zettel_path)
         short_des = _get_short_description(zettel_filename)
-
-        digraph.add_node(zettel_filename, short_description=short_des, path=zettel_path)
-
+        zettel_content = ""
         try:
-            for reference_zettel_filename in _load_references(zettel_path, zettel_directory_path):
-                if zettel_filename != reference_zettel_filename:
-                    digraph.add_edge(zettel_filename, reference_zettel_filename)
+            with open(zettel_path, "r") as zettel_file:
+                zettel_content = zettel_file.read()
+                if six.PY2:
+                    zettel_content = unicode(zettel_content, errors="strict")
         except UnicodeDecodeError as e:
             logger.warning("Skipping {}: {}".format(zettel_filename, e))
+            zettel_content = ""
+        digraph.add_node(
+            zettel_filename,
+            content=zettel_content,
+            short_description=short_des,
+            path=zettel_path,
+        )
+
+        for reference_zettel_filename in _load_references(
+            zettel_content, zettel_path, zettel_directory_path
+        ):
+            if zettel_filename != reference_zettel_filename:
+                digraph.add_edge(zettel_filename, reference_zettel_filename)
     return digraph
 
 
@@ -200,6 +226,31 @@ def _get_zero_degree_nodes(digraph):
     """
 
     return [node for node, degree in digraph.degree() if degree == 0]
+
+
+def _get_total_word_count(digraph):
+    """
+    Get the total number of words in all the Zettel. Aims to match the results from the `wc` utility. Per `man wc`,
+    the function iswspace(3) is used to determine the word boundaries. We are using `str.isspace`, which seems to behave
+    the same on our (small) test set.
+
+    :param digraph: DiGraph object representing the Zettel graph.
+    :return: Total number of words of all the Zettel in `digraph`.
+    """
+
+    word_count = 0
+    for (node, data) in digraph.nodes(data=True):
+        previous_is_space = True
+        zettel_word_count = 0
+        for character in data["content"]:
+            if character.isspace():
+                previous_is_space = True
+            else:
+                if previous_is_space:
+                    zettel_word_count += 1
+                previous_is_space = False
+        word_count += zettel_word_count
+    return word_count
 
 
 @main.command(short_help="PDF of Zettel graph")
@@ -248,6 +299,7 @@ def stats(directory, quiet):
     - Number of references between Zettel (including bi-directional and duplicate)
     - Number of Zettel without any reference from or to a Zettel
     - Number of connected components
+    - Number of words in all the Zettel (aims to match the `wc` command)
     \f
 
     :param quiet: When set to True, warnings will not be printed.
@@ -264,7 +316,13 @@ def stats(directory, quiet):
     n_nodes_no_edges = len(_get_zero_degree_nodes(digraph))
     logger.info("{} Zettel with no references".format(n_nodes_no_edges))
 
-    logger.info("{} connected components".format(nx.number_connected_components(digraph.to_undirected())))
+    logger.info(
+        "{} connected components".format(
+            nx.number_connected_components(digraph.to_undirected())
+        )
+    )
+
+    logger.info("{} words".format(_get_total_word_count(digraph)))
 
 
 @main.command(short_help="Zettel without references")

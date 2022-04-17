@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vizel"
-version = "0.3.1-beta.1"
+version = "0.3.2-beta.1"
 description = "Vizualise a Zettelkasten"
 authors = ["Basil Philipp <basil@interdimensional-television.com>"]
 license = "GPL-3.0-only"
@@ -17,10 +17,10 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^2.7 || ^3.5"
+python = "^2.7 || ^3.6"
 networkx = [ 
             {version =  "2.2", python="^2.7"},
-            {version =  "2.4", python="^3.5"}
+            {version =  "2.4", python="^3.6"}
         ]
 click = "^7.1.1"
 graphviz = "^0.13.2"
@@ -29,7 +29,7 @@ six="^1.14.0"
 [tool.poetry.dev-dependencies]
 pytest = [ 
             {version =  "^4.6", python="^2.7"},
-            {version =  "^5.2", python="^3.5"}
+            {version =  "*", python="^3.6"}
         ]
 
 [tool.poetry.scripts]
