@@ -8,6 +8,9 @@ import networkx as nx
 import six
 from graphviz import Digraph
 
+backlinks_header = "## Backlinks:"
+title_regex = re.compile(r"^# (.+)", re.MULTILINE)
+
 
 class Logger:
     """
@@ -156,10 +159,11 @@ def _load_references(zettel_content, zettel_path, zettel_directory_path):
     return references
 
 
-def _get_short_description(zettel_filename):
+def _get_short_description(zettel_filename, zettel_directory_path):
     """
     Creates a short description out of the Zettel filename.
     :param zettel_filename: Filename of the Zettel
+    :param zettel_directory_path Path to directory where the Zettel are stored.
     :return: 50 character long string
     """
 
@@ -168,6 +172,12 @@ def _get_short_description(zettel_filename):
     remove = [".md", ".txt"]
     short_des = zettel_filename
 
+    with open(os.path.join(zettel_directory_path, zettel_filename), "r") as file:
+        content = file.read()
+        title_match = title_regex.search(content)
+        if title_match:
+            short_des += f" {title_match.group(1)}"
+
     for replace_char in replace_with_space:
         short_des = short_des.replace(replace_char, " ")
 
@@ -175,6 +185,14 @@ def _get_short_description(zettel_filename):
         short_des = short_des.replace(remove_char, "")
 
     return short_des
+
+
+def remove_old_backlinks(content: str):
+    # remove backlinks block
+    backlinks_index = content.find(backlinks_header)
+    if backlinks_index != -1:
+        content = content[:backlinks_index].rstrip()
+    return content
 
 
 def _get_digraph(zettel_directory_path):
@@ -190,13 +208,13 @@ def _get_digraph(zettel_directory_path):
     for zettel_path in sorted(
         glob.glob(os.path.join(zettel_directory_path, "*[.md|.txt]"))
     ):
-
         zettel_filename = os.path.basename(zettel_path)
-        short_des = _get_short_description(zettel_filename)
+        short_des = _get_short_description(zettel_filename, zettel_directory_path)
         zettel_content = ""
         try:
             with open(zettel_path, "r") as zettel_file:
                 zettel_content = zettel_file.read()
+                zettel_content = remove_old_backlinks(zettel_content)
                 if six.PY2:
                     zettel_content = unicode(zettel_content, errors="strict")
         except UnicodeDecodeError as e:
@@ -239,7 +257,7 @@ def _get_total_word_count(digraph):
     """
 
     word_count = 0
-    for (node, data) in digraph.nodes(data=True):
+    for node, data in digraph.nodes(data=True):
         previous_is_space = True
         zettel_word_count = 0
         for character in data["content"]:
@@ -255,26 +273,29 @@ def _get_total_word_count(digraph):
 
 @main.command(short_help="PDF of Zettel graph")
 @click.argument("directory", type=click.Path(exists=True, dir_okay=True))
+@click.option("-q", "--quiet", is_flag=True, help="Quiet mode")
 @click.option(
     "--pdf-name",
     default="vizel_graph.pdf",
     help="Name of the PDF file the graph is written into. Default: vizel_graph.pdf",
 )
-def graph_pdf(directory, pdf_name):
+def graph_pdf(directory, pdf_name, quiet):
     """
     Generates a PDF of the graph spanned by Zettel in DIRECTORY.
     \f
 
     :param directory: Directory where all the Zettel are.
     :param pdf_name: Name of the PDF file the graph is written into.
+    :param quiet: When set to True, warnings will not be printed.
     :return None
     """
 
+    Logger.initialize(suppress_warnings=quiet)
     digraph = _get_digraph(directory)
 
     dot = Digraph(comment="Zettelkasten Graph")
 
-    for (node, data) in digraph.nodes(data=True):
+    for node, data in digraph.nodes(data=True):
         dot.node(node, data["short_description"])
 
     for u, v in digraph.edges:
